@@ -8,5 +8,5 @@
         <AssemblyName>Reactive.BeatSaberSDK</AssemblyName>
         <RootNamespace>Reactive.BeatSaberSDK</RootNamespace>
     </PropertyGroup>
-    <Import Project="..\reactive-ui\ReactiveUI.ExternalBuild.targets" />
+    <Import Project="..\reactive-sdk\ReactiveSDK.ExternalBuild.targets" />
 </Project>
