@@ -1,12 +1,67 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net481</TargetFramework>
+        <TargetFramework>net48</TargetFramework>
         <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
         <UnityAssembliesDir>$(LocalRefsDir)</UnityAssembliesDir>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
-        <AssemblyName>Reactive.BeatSaberSDK</AssemblyName>
-        <RootNamespace>Reactive.BeatSaberSDK</RootNamespace>
+        <AssemblyName>Reactive.BeatSaber.Components</AssemblyName>
+        <Configurations>Debug;Release;Debug Editor;Release Editor</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
-    <Import Project="..\reactive-sdk\ReactiveSDK.ExternalBuild.targets" />
+
+    <PropertyGroup Condition="$(Configuration.Contains('Editor'))">
+        <DefineConstants>COMPILE_EDITOR</DefineConstants>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Reference Include="IPA.Loader">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
+        </Reference>
+        <Reference Include="HMUI" Publicize="True">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMUI.dll</HintPath>
+        </Reference>
+        <Reference Include="BeatSaber.ViewSystem" Publicize="True">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatSaber.ViewSystem.dll</HintPath>
+        </Reference>
+        <Reference Include="0Harmony">
+            <HintPath>$(BeatSaberDir)\Libs\0Harmony.dll</HintPath>
+        </Reference>
+        <Reference Include="HMLib">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMLib.dll</HintPath>
+        </Reference>
+        <Reference Include="Zenject">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
+        </Reference>
+        <Reference Include="Zenject">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
+        </Reference>
+        <Reference Include="Zenject-usage">
+            <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject-usage.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEditor.CoreModule">
+            <HintPath>$(UnityAssembliesDir)\UnityEditor.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AssetBundleModule">
+            <HintPath>$(UnityAssembliesDir)\UnityEngine.AssetBundleModule.dll</HintPath>
+        </Reference>
+        <Reference Include="Reactive">
+            <HintPath>$(ReactiveSDKDir)\bin\$(Configuration)\$(TargetFramework)\Reactive.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup Condition="!$(Configuration.Contains('Editor'))">
+        <EmbeddedResource Include="Resources\AssetBundles\asset_bundle"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+    
+    <Import Project="..\reactive-sdk\ReactiveSDK.ExternalBuild.targets"/>
+    <Import Project="..\reactive-sdk\ReactiveSDK.Unity.targets"/>
+    <Import Project="..\reactive-sdk\reactive-ui\ReactiveUI.Unity.targets"/>
 </Project>
