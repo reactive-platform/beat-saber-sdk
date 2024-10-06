@@ -50,8 +50,7 @@ namespace Reactive.BeatSaber.Components {
             if (animated) {
                 _progressValue.Value = active ? 1f : 0f;
             } else {
-                //TODO: replace with SetValue when i add it
-                _progressValue.Value = active ? 1f : 0f;
+                _progressValue.SetValueImmediate(active ? 1f : 0f);
             }
             if (!silent) {
                 NotifyPropertyChanged(nameof(Active));
