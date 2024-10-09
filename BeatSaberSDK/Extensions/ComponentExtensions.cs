@@ -108,4 +108,19 @@ public static class ComponentExtensions {
     }
 
     #endregion
+
+    #region Modal
+
+    public static void Present<T>(this T comp, Transform child, bool animated = true) where T : IModal, IReactiveComponent {
+        var screen = child.GetComponentInParent<ViewController>().transform;
+        ModalSystem.PresentModal(comp, screen, animated);
+    }
+
+    public static T WithModal<T, TModal>(this T comp, TModal modal, bool animated = true)
+        where T : ButtonBase where TModal : IModal, IReactiveComponent {
+        comp.OnClick += () => modal.Present(comp.ContentTransform, animated);
+        return comp;
+    }
+
+    #endregion
 }
