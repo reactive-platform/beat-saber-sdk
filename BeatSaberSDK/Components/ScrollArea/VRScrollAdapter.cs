@@ -1,4 +1,3 @@
-using System.Linq;
 using Reactive.Components;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,8 +12,8 @@ namespace Reactive.BeatSaber.Components {
 
         private void Awake() {
             _pointerEventsHandler = GetComponent<PointerEventsHandler>();
-            var context = FindObjectsByType<Zenject.Context>(FindObjectsSortMode.InstanceID).First();
-            _platformHelper = context.Container.Resolve<IVRPlatformHelper>();
+            var context = BeatSaberUtils.MenuContainer;
+            _platformHelper = context.Resolve<IVRPlatformHelper>();
         }
 
         private void Update() {
