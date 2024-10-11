@@ -32,6 +32,8 @@ public class GameResources : ScriptableObject {
     internal static void Init() {
         if (_instance != null) return;
         _instance = CreateInstance<GameResources>();
+        _instance.arrowIcon = Find<Sprite>("ArrowIcon");
+        _instance.verticalIndicatorIcon = Find<Sprite>("VerticalRoundRect8");
         _instance.uiNoGlowMaterial = Find<Material>("UINoGlow");
         _instance.uiFontMaterial = Find<Material>(
             "Teko-Medium SDF Curved Softer",
