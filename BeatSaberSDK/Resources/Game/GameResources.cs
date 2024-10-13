@@ -33,6 +33,7 @@ public class GameResources : ScriptableObject {
         if (_instance != null) return;
         _instance = CreateInstance<GameResources>();
         _instance.arrowIcon = Find<Sprite>("ArrowIcon");
+        _instance.caretIcon = Find<Sprite>("Caret");
         _instance.verticalIndicatorIcon = Find<Sprite>("VerticalRoundRect8");
         _instance.uiNoGlowMaterial = Find<Material>("UINoGlow");
         _instance.uiFontMaterial = Find<Material>(
@@ -56,6 +57,7 @@ public class GameResources : ScriptableObject {
     public Material uiFogBackgroundMaterial;
 
     public Sprite arrowIcon;
+    public Sprite caretIcon;
     public Sprite verticalIndicatorIcon;
 
     #endregion
@@ -69,6 +71,8 @@ public class GameResources : ScriptableObject {
     public static Material UIFontMaterial => _instance.uiFontMaterial;
 
     public static Sprite ArrowIcon => _instance.arrowIcon;
+    
+    public static Sprite CaretIcon => _instance.arrowIcon;
 
     public static Sprite VerticalIndicatorIcon => _instance.verticalIndicatorIcon;
 
