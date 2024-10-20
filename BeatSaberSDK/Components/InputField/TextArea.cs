@@ -209,7 +209,7 @@ namespace Reactive.BeatSaber.Components {
                         alignSelf: Align.Center,
                         margin: new() { right = 1f }
                     ).AsFlexGroup(
-                        padding: 1f
+                        padding: 0.7f
                     ).Bind(ref _clearButton),
                 }
             }.AsFlexGroup(padding: 1f, gap: 1f).WithListener(
