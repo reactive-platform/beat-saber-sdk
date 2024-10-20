@@ -72,7 +72,7 @@ public class GameResources : ScriptableObject {
 
     public static Sprite ArrowIcon => _instance.arrowIcon;
     
-    public static Sprite CaretIcon => _instance.arrowIcon;
+    public static Sprite CaretIcon => _instance.caretIcon;
 
     public static Sprite VerticalIndicatorIcon => _instance.verticalIndicatorIcon;
 
