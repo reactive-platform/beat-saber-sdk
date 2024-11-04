@@ -222,7 +222,7 @@ namespace Reactive.BeatSaber.Components {
                     ),
                     //modal
                     new OptionsModal()
-                        .WithScaleAnimation()
+                        .WithJumpAnimation()
                         .WithAnchor(() => ContentTransform, RelativePlacement.Center, unbindOnceOpened: false)
                         .With(x => x.Setup(_previewCell))
                         .Bind(ref _modal)

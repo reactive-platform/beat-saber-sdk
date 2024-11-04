@@ -64,6 +64,7 @@ namespace Reactive.BeatSaber.Components {
         }
 
         protected override void OnSpawn() {
+            Modal.WithJumpAnimation();
             Keyboard.KeyboardClosedEvent += HandleKeyboardClosed;
         }
 
