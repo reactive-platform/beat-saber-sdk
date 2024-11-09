@@ -14,11 +14,7 @@ namespace Reactive.BeatSaber.Components {
         private static readonly Material buttonBorderMaterial = Resources
             .FindObjectsOfTypeAll<Material>()
             .First(static x => x.name == "AnimatedButtonBorder");
-
-        private static readonly Sprite roundRect10Border = Resources
-            .FindObjectsOfTypeAll<Sprite>()
-            .First(static x => x.name == "RoundRect10Border");
-
+        
         private Image _borderImage = null!;
 
         protected override void ApplySkew(float skew) {
@@ -48,9 +44,9 @@ namespace Reactive.BeatSaber.Components {
         protected override void Construct(RectTransform rect) {
             //border
             new Image {
-                Sprite = roundRect10Border,
+                Sprite = BeatSaberResources.Sprites.frame,
                 Material = buttonBorderMaterial,
-                ImageType = UnityEngine.UI.Image.Type.Sliced
+                PixelsPerUnit = 15f
             }.WithRectExpand().Bind(ref _borderImage);
             base.Construct(rect);
             //applying later to move it over the content
