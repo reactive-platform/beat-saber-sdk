@@ -1,3 +1,3 @@
-[submodule "reactive-sdk"]
-	path = reactive-sdk
+[submodule "BeatSaberSDK/reactive-sdk"]
+	path = BeatSaberSDK/reactive-sdk
 	url = https://github.com/reactive-platform/reactive-sdk
