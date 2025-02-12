@@ -1,7 +1,7 @@
 ﻿{
   "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
-  "id": "Reactive.BeatSaberSDK",
-  "name": "Reactive.BeatSaberSDK",
+  "id": "Reactive.BeatSaber",
+  "name": "Reactive.BeatSaber",
   "author": "Hermanest",
   "version": "0.0.1",
   "description": "Beat Saber SDK for the ReactiveUI library.",

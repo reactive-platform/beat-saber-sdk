@@ -7,6 +7,7 @@
     <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
     <LangVersion>12</LangVersion>
     <Nullable>enable</Nullable>
+    <AssemblyName>Reactive.BeatSaber</AssemblyName>
   </PropertyGroup>
   <PropertyGroup>
     <Copyright>Copyright © 2024</Copyright>
@@ -27,6 +28,8 @@
     <None Remove="reactive-sdk\reactive-ui\ReactiveUI.Unity.targets" />
     <None Remove="reactive-sdk\ReactiveSDK.ExternalBuild.targets" />
     <None Remove="reactive-sdk\ReactiveSDK.Unity.targets" />
+    <None Remove="Resources\AssetBundles\asset_bundle" />
+    <None Remove="Resources\AssetBundles\reactive_asset_bundle" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -125,13 +128,25 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />
+    <EmbeddedResource Include="Resources\AssetBundles\asset_bundle" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
-    <None Include="BeatSaberSDK.csproj.user" Condition="Exists('BeatSaberSDK.csproj.user')" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks" Version="2.0.0-beta7" PrivateAssets="all" />
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\bin\x64\$(Configuration)\yoga.dll">
+      <LogicalName>Reactive.BeatSaber.yoga.dll</LogicalName>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="UIStyle.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 </Project>

@@ -7,6 +7,16 @@ using Zenject;
 
 namespace Reactive.BeatSaber;
 
+[HarmonyPatch(typeof(MainSettingsMenuViewControllersInstaller), "InstallBindings")]
+public static class MenuInstallerPatch {
+    [UsedImplicitly]
+    // ReSharper disable once InconsistentNaming
+    private static void Postfix(MainSettingsMenuViewControllersInstaller __instance) {
+        BeatSaberUtils._menuContainer = __instance.Container;
+        Console.WriteLine("MainSettingsMenuViewControllersInstaller");
+    }
+}
+
 [PublicAPI]
 [HarmonyPatch]
 public static class BeatSaberUtils {
@@ -30,14 +40,8 @@ public static class BeatSaberUtils {
     public static DiContainer MenuContainer => _menuContainer ?? throw EarlyInitException();
     public static DiContainer AppContainer => _appContainer ?? throw EarlyInitException();
 
-    private static DiContainer? _menuContainer;
-    private static DiContainer? _appContainer;
-
-    [HarmonyPatch(typeof(MainSettingsMenuViewControllersInstaller), "InstallBindings")]
-    [HarmonyPostfix]
-    private static void MenuInstallerPostfix(MainSettingsMenuViewControllersInstaller __instance) {
-        _menuContainer = __instance.Container;
-    }
+    public static DiContainer? _menuContainer;
+    public static DiContainer? _appContainer;
     
     [HarmonyPatch(typeof(PCAppInit), "InstallBindings")]
     [HarmonyPostfix]
