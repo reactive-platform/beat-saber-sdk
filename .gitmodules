@@ -1,3 +1,6 @@
 [submodule "BeatSaberSDK/reactive-sdk"]
 	path = BeatSaberSDK/reactive-sdk
 	url = https://github.com/reactive-platform/reactive-sdk
+[submodule "yoga-binding"]
+	path = yoga-binding
+	url = https://github.com/reactive-platform/yoga-binding.git

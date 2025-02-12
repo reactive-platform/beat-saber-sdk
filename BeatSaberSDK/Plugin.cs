@@ -14,7 +14,7 @@ namespace BeatSaberSDK {
         
         [OnStart, UsedImplicitly]
         public void OnApplicationStart() {
-            _harmony = new Harmony("Reactive.BeatSaberSDK");
+            _harmony = new Harmony("Reactive.BeatSaber");
             _harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
