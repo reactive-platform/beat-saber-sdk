@@ -69,7 +69,7 @@ public class ImageButton : ColoredButton, IChildrenProvider {
             Image.GradientColor0 = GetColor(GradientColors0);
         }
         if (GradientColors1 != null) {
-            Image.GradientColor1= GetColor(GradientColors1);
+            Image.GradientColor1 = GetColor(GradientColors1);
         }
     }
 
@@ -89,6 +89,13 @@ public class ImageButton : ColoredButton, IChildrenProvider {
         Image.Use(rect);
         //content
         base.Construct(rect);
+    }
+
+    protected override void OnButtonStateChange() {
+        base.OnButtonStateChange();
+        if (IsPressed) {
+            GameResources.ButtonClickSignal.Raise();
+        }
     }
 
     #endregion

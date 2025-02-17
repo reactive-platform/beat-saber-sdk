@@ -32,6 +32,7 @@ public class GameResources : ScriptableObject {
     internal static void Init() {
         if (_instance != null) return;
         _instance = CreateInstance<GameResources>();
+        _instance.buttonClickSignal = Find<Signal>("UIButtonWasPressed");
         _instance.arrowIcon = Find<Sprite>("ArrowIcon");
         _instance.caretIcon = Find<Sprite>("Caret");
         _instance.verticalIndicatorIcon = Find<Sprite>("VerticalRoundRect8");
@@ -51,6 +52,8 @@ public class GameResources : ScriptableObject {
     #endregion
 
     #region Serialized
+    
+    public Signal buttonClickSignal;
 
     public Material uiNoGlowMaterial;
     public Material uiFontMaterial;
@@ -64,6 +67,8 @@ public class GameResources : ScriptableObject {
 
     #region Static
 
+    public static Signal ButtonClickSignal => _instance.buttonClickSignal;
+    
     public static Material UIFogBackgroundMaterial => _instance.uiFogBackgroundMaterial;
 
     public static Material UINoGlowMaterial => _instance.uiNoGlowMaterial;
