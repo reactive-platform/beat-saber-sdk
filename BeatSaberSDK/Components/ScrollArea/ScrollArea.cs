@@ -6,9 +6,7 @@ namespace Reactive.BeatSaber.Components;
 public class ScrollArea : Reactive.Components.Basic.ScrollArea {
 #if !COMPILE_EDITOR
     protected override void OnInitialize() {
-        if (BeatSaberUtils.UsesFPFC) {
-            Content.AddComponent<VRScrollAdapter>();
-        }
+        Content.AddComponent<VRScrollAdapter>();
         base.OnInitialize();
     }
 #endif
