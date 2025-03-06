@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Reactive.BeatSaber.Components;
 
 [PublicAPI]
-public class ImageButton : ColoredButton, IChildrenProvider {
+public class ImageButton : ColoredButton, IChildrenProvider, ISkewedComponent {
     #region UI Props
 
     public IColorSet? GradientColors0 {
