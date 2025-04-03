@@ -1,11 +1,12 @@
 using HMUI;
 using JetBrains.Annotations;
+using Reactive.Components;
 using UnityEngine;
 
 namespace Reactive.BeatSaber.Components;
 
 [PublicAPI]
-public class Image : DrivingReactiveComponent, ISkewedComponent {
+public class Image : DrivingReactiveComponent, ISkewedComponent, IGraphic {
     public Sprite? Sprite {
         get => _image.sprite;
         set {

@@ -1,12 +1,13 @@
 using HMUI;
 using JetBrains.Annotations;
+using Reactive.Components;
 using TMPro;
 using UnityEngine;
 
 namespace Reactive.BeatSaber.Components;
 
 [PublicAPI]
-public class Label : ReactiveComponent, ISkewedComponent {
+public class Label : ReactiveComponent, ISkewedComponent, IGraphic {
     public string Text {
         get => _text.text;
         set {
