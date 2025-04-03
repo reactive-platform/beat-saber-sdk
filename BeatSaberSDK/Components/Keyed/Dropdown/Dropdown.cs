@@ -265,7 +265,7 @@ namespace Reactive.BeatSaber.Components {
             NotifyPropertyChanged(nameof(Items));
         }
 
-        private void HandleItemRemoved(TKey key) {
+        private void HandleItemRemoved(TKey key, TParam param) {
             Table.Items.Remove(new() { key = key });
             Table.Refresh();
             RefreshSelection();

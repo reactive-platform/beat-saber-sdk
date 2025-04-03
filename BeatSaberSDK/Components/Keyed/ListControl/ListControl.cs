@@ -182,7 +182,7 @@ namespace Reactive.BeatSaber.Components {
             NotifyPropertyChanged(nameof(Items));
         }
 
-        private void HandleItemRemoved(TKey key) {
+        private void HandleItemRemoved(TKey key, TParam param) {
             _keys.Remove(key);
             if (_selectedKey?.Equals(key) ?? false) {
                 _selectedKey = default;
