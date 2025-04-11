@@ -18,7 +18,7 @@ public static class ComponentExtensions {
         float fontSize = 4f,
         bool richText = true,
         TextOverflowModes overflow = TextOverflowModes.Overflow
-    ) where T : ButtonBase, IChildrenProvider {
+    ) where T : ButtonBase, ILayoutDriver {
         return WithLabel(
             button,
             out _,
@@ -36,7 +36,7 @@ public static class ComponentExtensions {
         float fontSize = 4f,
         bool richText = true,
         TextOverflowModes overflow = TextOverflowModes.Overflow
-    ) where T : ButtonBase, IChildrenProvider {
+    ) where T : ButtonBase, ILayoutDriver {
         button.AsFlexGroup(alignItems: Align.Center);
         button.Children.Add(
             new Label {
@@ -46,10 +46,9 @@ public static class ComponentExtensions {
                 Overflow = overflow
             }.With(
                 x => {
-                    if (button is not ISkewedComponent skewed) {
-                        return;
+                    if (button is ISkewedComponent skewed) {
+                        ((ISkewedComponent)x).Skew = skewed.Skew;
                     }
-                    ((ISkewedComponent)x).Skew = skewed.Skew;
                 }
             ).AsFlexItem(
                 size: "auto",

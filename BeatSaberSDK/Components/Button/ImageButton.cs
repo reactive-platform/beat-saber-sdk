@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using Reactive.Components;
 using UnityEngine;
@@ -6,7 +5,7 @@ using UnityEngine;
 namespace Reactive.BeatSaber.Components;
 
 [PublicAPI]
-public class ImageButton : ColoredButton, IChildrenProvider, ISkewedComponent {
+public class ImageButton : ColoredButton, ISkewedComponent {
     #region UI Props
 
     public IColorSet? GradientColors0 {
@@ -37,8 +36,6 @@ public class ImageButton : ColoredButton, IChildrenProvider, ISkewedComponent {
         }
     }
 
-    public new ICollection<ILayoutItem> Children => base.Children;
-
     private float _skew;
     private IColorSet? _gradientColors0;
     private IColorSet? _gradientColors1;
@@ -50,12 +47,6 @@ public class ImageButton : ColoredButton, IChildrenProvider, ISkewedComponent {
     protected virtual void ApplySkew(float skew) {
         Image.Skew = skew;
     }
-
-    #endregion
-
-    #region UI Components
-
-    public Image Image { get; private set; } = null!;
 
     #endregion
 
@@ -80,15 +71,13 @@ public class ImageButton : ColoredButton, IChildrenProvider, ISkewedComponent {
     #endregion
 
     #region Setup
+    
+    public Image Image { get; private set; } = null!;
 
-    protected override void Construct(RectTransform rect) {
-        //background
-        Image = new Image {
-            Name = "Background"
-        }.WithRectExpand();
-        Image.Use(rect);
-        //content
-        base.Construct(rect);
+    protected override GameObject Construct() {
+        return new Image()
+            .With(x => base.Construct(x.ContentTransform))
+            .Use();
     }
 
     protected override void OnButtonStateChange() {

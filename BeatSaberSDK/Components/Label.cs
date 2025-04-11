@@ -1,13 +1,14 @@
 using HMUI;
 using JetBrains.Annotations;
 using Reactive.Components;
+using Reactive.Yoga;
 using TMPro;
 using UnityEngine;
 
 namespace Reactive.BeatSaber.Components;
 
 [PublicAPI]
-public class Label : ReactiveComponent, ISkewedComponent, IGraphic {
+public class Label : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutItem {
     public string Text {
         get => _text.text;
         set {
@@ -131,9 +132,6 @@ public class Label : ReactiveComponent, ISkewedComponent, IGraphic {
         }
     }
 
-    protected override float? DesiredHeight => _text.preferredHeight;
-    protected override float? DesiredWidth => _text.preferredWidth;
-
     private TextMeshProUGUI _text = null!;
 
     protected override void Construct(RectTransform rect) {
@@ -150,5 +148,21 @@ public class Label : ReactiveComponent, ISkewedComponent, IGraphic {
 
     protected override void OnStart() {
         RefreshLayout();
+    }
+
+    public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
+        var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
+        var measuredHeight = heightMode == MeasureMode.Undefined ? Mathf.Infinity : height;
+
+        // Set the preferred width, forcing recalculation
+        _text.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, measuredWidth);
+        _text.ForceMeshUpdate();
+
+        var textSize = _text.GetPreferredValues(measuredWidth, measuredHeight);
+
+        return new() {
+            x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(textSize.x, measuredWidth),
+            y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(textSize.y, measuredHeight)
+        };
     }
 }

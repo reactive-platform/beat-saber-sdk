@@ -89,7 +89,7 @@ namespace Reactive.BeatSaber.Components {
                     x => x.IsHovered,
                     _ => RefreshImage()
                 );
-                
+
                 void RefreshImage() {
                     var hovered = button.IsHovered;
                     image.ContentTransform.localScale = hovered ? Vector3.one * 1.2f : Vector3.one;
@@ -99,13 +99,15 @@ namespace Reactive.BeatSaber.Components {
                 }
             }
 
-            return new Dummy {
+            return new Layout {
                 Children = {
                     //handle container
-                    new Image {
-                        Sprite = BeatSaberResources.Sprites.background,
-                        PixelsPerUnit = 20f,
-                        Color = Color.black.ColorWithAlpha(0.5f),
+                    new ImageLayout {
+                        Image = {
+                            Sprite = BeatSaberResources.Sprites.background,
+                            PixelsPerUnit = 20f,
+                            Color = Color.black.ColorWithAlpha(0.5f),
+                        },
                         Children = {
                             //handle
                             new Image {
@@ -124,7 +126,7 @@ namespace Reactive.BeatSaber.Components {
                         margin: new() { left = "15%", right = "15%", top = 4f, bottom = 4f }
                     ).Bind(ref _handleContainerRect),
                     //
-                    new Dummy {
+                    new Layout {
                         Children = {
                             //up button
                             CreateButton(180f, HandleUpButtonClicked)

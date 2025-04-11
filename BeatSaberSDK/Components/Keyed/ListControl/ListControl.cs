@@ -91,7 +91,7 @@ namespace Reactive.BeatSaber.Components {
                     HoveredColor = Color.white.ColorWithAlpha(0.3f),
                     Color = Color.clear
                 };
-                return new ImageButton {
+                return new ImageLayout {
                     Image = {
                         Color = Color.white,
                         Sprite = BeatSaberResources.Sprites.background,
@@ -128,7 +128,7 @@ namespace Reactive.BeatSaber.Components {
                 );
             }
 
-            return new Image {
+            return new ImageLayout {
                 Children = {
                     //
                     new TCell {
@@ -138,7 +138,7 @@ namespace Reactive.BeatSaber.Components {
                         margin: new() { left = 5f, right = 5f }
                     ).Bind(ref _cell),
                     //buttons
-                    new Dummy {
+                    new Layout {
                         Children = {
                             CreateButton(
                                 false,
@@ -158,7 +158,12 @@ namespace Reactive.BeatSaber.Components {
                         }
                     }.AsFlexGroup().WithRectExpand()
                 }
-            }.AsFlexGroup().AsBackground(color: UIStyle.InputColorSet.Color).Use();
+            }.With(
+                x => {
+                    x.AsFlexGroup();
+                    x.Image.AsBackground(color: UIStyle.InputColorSet.Color);
+                }
+            ).Use();
         }
 
         #endregion

@@ -1,12 +1,13 @@
 using HMUI;
 using JetBrains.Annotations;
 using Reactive.Components;
+using Reactive.Yoga;
 using UnityEngine;
 
 namespace Reactive.BeatSaber.Components;
 
 [PublicAPI]
-public class Image : DrivingReactiveComponent, ISkewedComponent, IGraphic {
+public class Image : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutItem {
     public Sprite? Sprite {
         get => _image.sprite;
         set {
@@ -119,5 +120,30 @@ public class Image : DrivingReactiveComponent, ISkewedComponent, IGraphic {
     protected override void Construct(RectTransform rect) {
         _image = rect.gameObject.AddComponent<FixedImageView>();
         Material = GameResources.UINoGlowMaterial;
+    }
+
+    public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
+        var nativeSize = _image.sprite.rect.size;
+
+        // Scale to match Image's aspect ratio settings
+        var aspectRatio = nativeSize.x / nativeSize.y;
+        var measuredWidth = widthMode == MeasureMode.Undefined ? nativeSize.x : width;
+        var measuredHeight = heightMode == MeasureMode.Undefined ? nativeSize.y : height;
+
+        if (_image.preserveAspect) {
+            if (widthMode == MeasureMode.Exactly) {
+                measuredHeight = measuredWidth / aspectRatio;
+            } else if (heightMode == MeasureMode.Exactly) {
+                measuredWidth = measuredHeight * aspectRatio;
+            } else {
+                measuredWidth = Mathf.Min(measuredWidth, nativeSize.x);
+                measuredHeight = measuredWidth / aspectRatio;
+            }
+        }
+
+        return new() {
+            x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(measuredWidth, width),
+            y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(measuredHeight, height)
+        };
     }
 }
