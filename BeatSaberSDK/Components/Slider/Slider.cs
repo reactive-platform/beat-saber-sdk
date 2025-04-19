@@ -2,6 +2,7 @@ using System;
 using HMUI;
 using JetBrains.Annotations;
 using Reactive.Components;
+using Reactive.Yoga;
 using UnityEngine;
 
 namespace Reactive.BeatSaber.Components {
@@ -19,8 +20,8 @@ namespace Reactive.BeatSaber.Components {
             set {
                 _showButtons = value;
                 _background.Image.Sprite = value ?
-                     BeatSaberResources.Sprites.rectangle :
-                     BeatSaberResources.Sprites.background;
+                    BeatSaberResources.Sprites.rectangle :
+                    BeatSaberResources.Sprites.background;
                 _decrementButton.Enabled = value;
                 _incrementButton.Enabled = value;
             }
@@ -66,7 +67,10 @@ namespace Reactive.BeatSaber.Components {
         private void PlaceText(float handlePos) {
             _text.Text = _valueFormatter?.Invoke(Value) ?? $"{Value}";
             var halfPassed = handlePos > MaxHandlePosition / 2f;
-            var textSize = (((ILayoutItem)_text).DesiredWidth ?? 0f) / 2f + 1f;
+
+            var measuredSize = _text.Measure(0, MeasureMode.Undefined, 0, MeasureMode.Undefined);
+            var textSize = measuredSize.x / 2f + 1f;
+
             var textPos = halfPassed ? handlePos - textSize : handlePos + textSize + _handle.rect.width;
             _text.ContentTransform.localPosition = new(textPos, 0f, 0f);
         }
@@ -99,13 +103,13 @@ namespace Reactive.BeatSaber.Components {
         private PointerEventsHandler _pointerEventsHandler = null!;
 
         protected override GameObject Construct() {
-            static ButtonBase CreateButton(
+            static BackgroundButton CreateButton(
                 bool applyColor1,
                 Sprite backgroundSprite,
                 float iconRotation,
                 Action callback
             ) {
-                return new ImageButton {
+                return new BackgroundButton {
                     Image = {
                         Sprite = backgroundSprite,
                         PixelsPerUnit = 12f,
@@ -126,24 +130,27 @@ namespace Reactive.BeatSaber.Components {
                     }
                 }.With(
                     x => {
+                        var staticColor = UIStyle.InputColorSet.Color;
                         var animatedSet = new SimpleColorSet {
                             HoveredColor = Color.white.ColorWithAlpha(0.3f),
                             Color = UIStyle.InputColorSet.Color
                         };
-                        var staticColor = UIStyle.InputColorSet.Color;
-                        x.Image.Color = Color.white;
+
+                        var image = x.Image;
+                        image.Color = Color.white;
+
                         if (!applyColor1) {
                             x.GradientColors0 = animatedSet;
-                            x.Image.GradientColor1 = staticColor;
+                            image.GradientColor1 = staticColor;
                         } else {
                             x.GradientColors1 = animatedSet;
-                            x.Image.GradientColor0 = staticColor;
+                            image.GradientColor0 = staticColor;
                         }
                     }
                 ).AsFlexGroup(padding: 1.5f).AsFlexItem(basis: 6f);
             }
 
-            return new Dummy {
+            return new Layout {
                 Children = {
                     //dec button
                     CreateButton(
@@ -153,7 +160,7 @@ namespace Reactive.BeatSaber.Components {
                         HandleDecrementButtonClicked
                     ).Bind(ref _decrementButton),
                     //sliding area bg
-                    new ImageButton {
+                    new BackgroundButton {
                         Image = {
                             Sprite = BeatSaberResources.Sprites.rectangle,
                             PixelsPerUnit = 12f,
@@ -162,7 +169,7 @@ namespace Reactive.BeatSaber.Components {
                         Colors = UIStyle.InputColorSet,
                         Children = {
                             //sliding area
-                            new Dummy {
+                            new Layout {
                                 ContentTransform = {
                                     pivot = new(0f, 0.5f)
                                 },

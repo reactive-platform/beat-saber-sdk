@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Reactive.BeatSaber.Components;
 
 [PublicAPI]
-public class ImageButton : ColoredButton, ISkewedComponent {
+public class ImageButton : ColoredButton, IComponentHolder<Image>, ISkewedComponent {
     #region UI Props
 
     public IColorSet? GradientColors0 {
@@ -71,12 +71,16 @@ public class ImageButton : ColoredButton, ISkewedComponent {
     #endregion
 
     #region Setup
-    
-    public Image Image { get; private set; } = null!;
 
+    Image IComponentHolder<Image>.Component => Image;
+    public Image Image => _image;
+
+    private Image _image = null!;
+    
     protected override GameObject Construct() {
         return new Image()
             .With(x => base.Construct(x.ContentTransform))
+            .Bind(ref _image)
             .Use();
     }
 

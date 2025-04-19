@@ -32,31 +32,18 @@ namespace Reactive.BeatSaber.Components {
 
         #endregion
 
-        #region Setup
-
-        protected override void OnInitialize() {
-            _uiKeyboard.okButtonWasPressedEvent += HandleOkButtonPressed;
-            _uiKeyboard.deleteButtonWasPressedEvent += HandleDeletePressed;
-            _uiKeyboard.keyWasPressedEvent += HandleKeyPressed;
-        }
-
-        #endregion
-
         #region Construct
 
         public Image BackgroundImage => _backgroundImage;
-
-        protected override float? DesiredHeight => 32f;
-        protected override float? DesiredWidth => 96f;
 
         private HMUI.UIKeyboard _uiKeyboard = null!;
         private UnityEngine.UI.Button _okButton = null!;
         private Image _backgroundImage = null!;
 
         protected override GameObject Construct() {
-            return new Image {
+            return new Background {
                 Children = {
-                    new Dummy()
+                    new Layout()
                         .With(
                             x => {
                                 _uiKeyboard = InstantiateKeyboard();
@@ -74,6 +61,14 @@ namespace Reactive.BeatSaber.Components {
             var raycaster = clone.GetComponent<VRGraphicRaycaster>();
             BeatSaberUtils.MenuContainer.Inject(raycaster);
             return clone.GetComponent<HMUI.UIKeyboard>();
+        }
+
+        protected override void OnInitialize() {
+            this.WithSizeDelta(96f, 32f);
+            
+            _uiKeyboard.okButtonWasPressedEvent += HandleOkButtonPressed;
+            _uiKeyboard.deleteButtonWasPressedEvent += HandleDeletePressed;
+            _uiKeyboard.keyWasPressedEvent += HandleKeyPressed;
         }
 
         #endregion

@@ -103,9 +103,9 @@ namespace Reactive.BeatSaber.Components {
             }
 
             protected override GameObject Construct() {
-                return new Dummy {
+                return new Layout {
                     Children = {
-                        new Image {
+                        new Background {
                             Children = {
                                 new Table<DropdownOption, DropdownCellWrapper>()
                                     .WithListener(
@@ -201,13 +201,15 @@ namespace Reactive.BeatSaber.Components {
         private CanvasGroup _canvasGroup = null!;
 
         protected override GameObject Construct() {
-            return new ImageButton {
-                Image = {
-                    Sprite = BeatSaberResources.Sprites.background,
-                    PixelsPerUnit = 12f,
-                    Material = GameResources.UINoGlowMaterial
-                },
-                Colors = UIStyle.ControlColorSet,
+            return new BackgroundButton {
+         
+                    Image = {
+                        Sprite = BeatSaberResources.Sprites.background,
+                        PixelsPerUnit = 12f,
+                        Material = GameResources.UINoGlowMaterial
+                    },
+                    Colors = UIStyle.ControlColorSet,
+               
                 Children = {
                     new TCell {
                         UsedAsPreview = true

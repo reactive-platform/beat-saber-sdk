@@ -39,7 +39,7 @@ namespace Reactive.BeatSaber.Components {
             private ImageButton _button = null!;
 
             protected override GameObject Construct() {
-                return new ImageButton {
+                return new BackgroundButton {
                     Image = {
                         Sprite = BeatSaberResources.Sprites.rectangle,
                         Material = GameResources.UINoGlowMaterial

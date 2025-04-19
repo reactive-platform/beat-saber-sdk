@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Reactive.BeatSaber.Components;
 
 [PublicAPI]
-public class Image : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutItem {
+public class Image : ReactiveComponent, IComponentHolder<Image>, ISkewedComponent, IGraphic, ILeafLayoutItem {
     public Sprite? Sprite {
         get => _image.sprite;
         set {
@@ -114,6 +114,8 @@ public class Image : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutI
         get => _image.raycastTarget;
         set => _image.raycastTarget = value;
     }
+
+    Image IComponentHolder<Image>.Component => this;
 
     private FixedImageView _image = null!;
 

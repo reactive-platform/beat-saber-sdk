@@ -119,7 +119,11 @@ namespace Reactive.BeatSaber.Components {
         private void RefreshCaretPos(ILayoutItem item) {
             var transform = _caret.ContentTransform;
             var pos = transform.anchoredPosition;
-            pos.x = Text.Length == 0 ? 0 : Mathf.Max(item.DesiredWidth.GetValueOrDefault(), 0f);
+            
+            // item is Label here
+            var measuredSize = ((ILeafLayoutItem)item).Measure(0f, MeasureMode.Undefined, 0f, MeasureMode.Undefined);
+
+            pos.x = Text.Length == 0 ? 0 : measuredSize.x;
             transform.anchoredPosition = pos;
         }
 
@@ -135,8 +139,6 @@ namespace Reactive.BeatSaber.Components {
 
         #region Construct
 
-        protected override float? DesiredHeight => 8f;
-
         private ButtonBase _clearButton = null!;
         private ButtonBase _backgroundButton = null!;
         private Label _label = null!;
@@ -146,7 +148,7 @@ namespace Reactive.BeatSaber.Components {
         protected override GameObject Construct() {
             var labelColor = Remember(placeholderColor);
 
-            return new AeroButton {
+            return new AeroButtonLayout {
                 OnClick = () => SetInputEnabled(true),
                 Children = {
                     //icon
@@ -186,7 +188,7 @@ namespace Reactive.BeatSaber.Components {
                     ).AsFlexItem(grow: 1f).Bind(ref _label),
 
                     //clear button
-                    new ImageButton {
+                    new BackgroundButton {
                         Enabled = false,
                         WithinLayoutIfDisabled = true,
                         Image = {

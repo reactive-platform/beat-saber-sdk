@@ -33,20 +33,20 @@ namespace Reactive.BeatSaber.Components {
         private bool _loading;
 
         private CanvasGroup _containerGroup = null!;
-        private Dummy _container = null!;
-        private Dummy _spinner = null!;
+        private Layout _container = null!;
+        private Layout _spinner = null!;
 
         protected override GameObject Construct() {
-            return new Dummy {
+            return new Layout {
                 Children = {
-                    new Dummy()
+                    new Layout()
                         .AsFlexGroup()
                         .AsFlexItem(grow: 1f)
                         .WithNativeComponent(out _containerGroup)
                         .WithRectExpand()
                         .Bind(ref _container),
                     //spinner container
-                    new Dummy {
+                    new Layout {
                         Enabled = false,
                         Children = {
                             new Spinner().AsFlexItem(

@@ -135,7 +135,7 @@ namespace Reactive.BeatSaber.Components {
         private ImageButton _backgroundButton = null!;
 
         protected override GameObject Construct() {
-            return new ImageButton {
+            return new BackgroundButton {
                 Image = {
                     Sprite = BeatSaberResources.Sprites.background,
                     PixelsPerUnit = 12f,
@@ -148,7 +148,7 @@ namespace Reactive.BeatSaber.Components {
                 },
                 Children = {
                     //text area
-                    new Dummy {
+                    new Layout {
                         Children = {
                             new Label {
                                 Text = "I",
@@ -162,7 +162,7 @@ namespace Reactive.BeatSaber.Components {
                         }
                     }.AsFlexGroup().WithRectExpand(),
                     //knob slide area
-                    new Dummy {
+                    new Layout {
                         Children = {
                             //knob
                             new Image {

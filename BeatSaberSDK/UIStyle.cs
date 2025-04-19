@@ -2,6 +2,7 @@ using Reactive.Components;
 using UnityEngine;
 
 namespace Reactive.BeatSaber {
+    //TODO: Rename to BeatSaberStyle and make public
     internal static class UIStyle {
         public static readonly float Skew = 0.18f;
 

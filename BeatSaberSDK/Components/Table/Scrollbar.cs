@@ -65,29 +65,35 @@ namespace Reactive.BeatSaber.Components {
         private ButtonBase _downButton = null!;
 
         protected override GameObject Construct() {
-            static ButtonBase CreateButton(float rotation, Action callback) {
-                return new ImageButton {
+            static BackgroundButton CreateButton(float rotation, Action callback) {
+                return new BackgroundButton {
                     Image = {
                         Sprite = BeatSaberResources.Sprites.transparentPixel,
                         Material = null
                     },
                     OnClick = callback,
+
                     Children = {
-                        new Image {
+                        new Background {
                             ContentTransform = {
                                 localEulerAngles = new(0f, 0f, rotation)
                             },
+
                             Sprite = GameResources.ArrowIcon,
                             PreserveAspect = true,
                             Material = GameResources.UINoGlowMaterial
-                        }.Export(out var image).AsFlexItem(size: 4f)
+                        }.Export(out Image image).AsFlexItem(size: 4f)
                     }
-                }.AsFlexItem(grow: 1f).Export(out var button).WithListener(
-                    x => x.Interactable,
-                    _ => RefreshImage()
-                ).WithListener(
-                    x => x.IsHovered,
-                    _ => RefreshImage()
+                }.AsFlexItem(grow: 1f).Export(out ColoredButton button).With(
+                    y => {
+                        y.WrappedButton.WithListener(
+                            x => x.Interactable,
+                            _ => RefreshImage()
+                        ).WithListener(
+                            x => x.IsHovered,
+                            _ => RefreshImage()
+                        );
+                    }
                 );
 
                 void RefreshImage() {
@@ -102,12 +108,11 @@ namespace Reactive.BeatSaber.Components {
             return new Layout {
                 Children = {
                     //handle container
-                    new ImageLayout {
-                        Image = {
-                            Sprite = BeatSaberResources.Sprites.background,
-                            PixelsPerUnit = 20f,
-                            Color = Color.black.ColorWithAlpha(0.5f),
-                        },
+                    new Background {
+                        Sprite = BeatSaberResources.Sprites.background,
+                        PixelsPerUnit = 20f,
+                        Color = Color.black.ColorWithAlpha(0.5f),
+
                         Children = {
                             //handle
                             new Image {

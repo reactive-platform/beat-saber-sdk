@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace Reactive.BeatSaber.Components {
     /// <summary>
-    /// Represents a content-less Beat Saber styled button.
+    /// A content-less Beat Saber styled button.
     /// </summary>
     [PublicAPI]
-    public abstract class BsButtonBase : ReactiveComponent, ISkewedComponent, IInteractableComponent {
+    public abstract class BsButtonBase : ReactiveComponent, IComponentHolder<ButtonBase>, ISkewedComponent, IInteractableComponent {
         #region UI Props
 
         public bool ShowUnderline {
@@ -26,7 +26,10 @@ namespace Reactive.BeatSaber.Components {
 
         public bool Interactable {
             get => _button.Interactable;
-            set => _button.Interactable = value;
+            set {
+                _button.Interactable = value;
+                OnInteractableChanged(value);
+            }
         }
 
         public bool IsPressed => _button.IsPressed;
@@ -39,6 +42,8 @@ namespace Reactive.BeatSaber.Components {
 
         #region Setup
 
+        ButtonBase IComponentHolder<ButtonBase>.Component => _button;
+        
         private Image _underline = null!;
         private ImageButton _button = null!;
 
@@ -84,6 +89,8 @@ namespace Reactive.BeatSaber.Components {
 
         protected abstract IReactiveComponent ConstructContent();
 
+        protected virtual void OnInteractableChanged(bool interactable) { }
+        
         protected override void OnInitialize() {
             Skew = UIStyle.Skew;
         }

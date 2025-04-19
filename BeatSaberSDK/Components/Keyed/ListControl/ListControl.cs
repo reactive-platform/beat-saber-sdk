@@ -80,7 +80,7 @@ namespace Reactive.BeatSaber.Components {
         private ButtonBase _prevButton = null!;
 
         protected override GameObject Construct() {
-            static ButtonBase CreateButton(
+            static BackgroundButton CreateButton(
                 bool applyColor1,
                 float iconRotation,
                 Justify justify,
@@ -91,18 +91,21 @@ namespace Reactive.BeatSaber.Components {
                     HoveredColor = Color.white.ColorWithAlpha(0.3f),
                     Color = Color.clear
                 };
-                return new ImageLayout {
+
+                return new BackgroundButton {
                     Image = {
                         Color = Color.white,
                         Sprite = BeatSaberResources.Sprites.background,
                         PixelsPerUnit = 12f,
                         GradientDirection = ImageView.GradientDirection.Horizontal,
-                        Material = GameResources.UINoGlowMaterial
+                        Material = GameResources.UINoGlowMaterial,
                     },
+
                     Colors = null,
                     GradientColors0 = applyColor1 ? null : colorSet,
                     GradientColors1 = applyColor1 ? colorSet : null,
                     OnClick = callback,
+                    
                     Children = {
                         //icon
                         new Image {
@@ -114,11 +117,15 @@ namespace Reactive.BeatSaber.Components {
                             }
                         }.AsFlexItem(aspectRatio: 1f).Export(out var icon)
                     }
-                }.WithListener(
-                    x => x.Interactable,
-                    x => icon.Color = x ?
-                        Color.white.ColorWithAlpha(0.8f) :
-                        (Color.white * 0.9f).ColorWithAlpha(0.25f)
+                }.With(
+                    x => {
+                        x.WrappedButton.WithListener(
+                            x => x.Interactable,
+                            x => icon.Color = x ?
+                                Color.white.ColorWithAlpha(0.8f) :
+                                (Color.white * 0.9f).ColorWithAlpha(0.25f)
+                        );
+                    }
                 ).AsFlexGroup(
                     padding: 1.5f,
                     justifyContent: justify
@@ -128,7 +135,7 @@ namespace Reactive.BeatSaber.Components {
                 );
             }
 
-            return new ImageLayout {
+            return new Background {
                 Children = {
                     //
                     new TCell {
@@ -161,7 +168,7 @@ namespace Reactive.BeatSaber.Components {
             }.With(
                 x => {
                     x.AsFlexGroup();
-                    x.Image.AsBackground(color: UIStyle.InputColorSet.Color);
+                    x.AsBackground(color: UIStyle.InputColorSet.Color);
                 }
             ).Use();
         }

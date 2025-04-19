@@ -1,5 +1,4 @@
 using JetBrains.Annotations;
-using Reactive.Components;
 using Reactive.Yoga;
 using UnityEngine;
 
@@ -24,10 +23,10 @@ namespace Reactive.BeatSaber.Components {
 
         private ILayoutItem? _component;
         private Label _label = null!;
-        private Dummy _container = null!;
+        private Layout _container = null!;
 
         protected override GameObject Construct() {
-            return new Dummy {
+            return new Layout {
                 Children = {
                     new Label {
                         Text = "Oops, text is missing"

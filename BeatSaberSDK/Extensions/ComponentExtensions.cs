@@ -66,7 +66,7 @@ public static class ComponentExtensions {
         bool preserveAspect = true,
         UImage.Type type = UImage.Type.Simple,
         Optional<Material>? material = default
-    ) where T : ButtonBase, IChildrenProvider {
+    ) where T : ButtonBase, ILayoutDriver {
         return WithImage(
             button,
             out _,
@@ -88,7 +88,7 @@ public static class ComponentExtensions {
         bool preserveAspect = true,
         UImage.Type type = UImage.Type.Simple,
         Optional<Material>? material = default
-    ) where T : ButtonBase, IChildrenProvider {
+    ) where T : ButtonBase, ILayoutDriver {
         button.Children.Add(
             new Image {
                 Sprite = sprite,
@@ -112,7 +112,7 @@ public static class ComponentExtensions {
     #region Image
 
     [Pure]
-    public static Image InBackground(
+    public static Background InBackground(
         this ILayoutItem comp,
         Optional<Sprite> sprite = default,
         Optional<Material> material = default,
@@ -124,7 +124,7 @@ public static class ComponentExtensions {
         Color gradientColor0 = default,
         Color gradientColor1 = default
     ) {
-        return comp.In<Image>().AsBackground(
+        return comp.In<Background>().AsBackground(
             sprite,
             material,
             color,
@@ -138,27 +138,29 @@ public static class ComponentExtensions {
     }
 
     [Pure]
-    public static Image InBlurBackground(
+    public static Background InBlurBackground(
         this ILayoutItem comp,
         float pixelsPerUnit = 12f,
         Color? color = null
     ) {
-        return comp.In<Image>().AsBlurBackground(
+        return comp.In<Background>().AsBlurBackground(
             pixelsPerUnit,
             color
         );
     }
 
-    public static T AsBlurBackground<T>(this T comp, float pixelsPerUnit = 12f, Color? color = null) where T : Image {
+    public static T AsBlurBackground<T>(this T holder, float pixelsPerUnit = 12f, Color? color = null) where T : IComponentHolder<Image> {
+        var comp = holder.Component;
         comp.Sprite ??= BeatSaberResources.Sprites.background;
         comp.Material = GameResources.UIFogBackgroundMaterial;
         comp.Color = color ?? comp.Color;
         comp.PixelsPerUnit = pixelsPerUnit;
-        return comp;
+
+        return holder;
     }
 
     public static T AsBackground<T>(
-        this T component,
+        this T holder,
         Optional<Sprite> sprite = default,
         Optional<Material> material = default,
         Color? color = null,
@@ -168,9 +170,11 @@ public static class ComponentExtensions {
         ImageView.GradientDirection? gradientDirection = null,
         Color gradientColor0 = default,
         Color gradientColor1 = default
-    ) where T : Image {
+    ) where T : IComponentHolder<Image> {
         sprite.SetValueIfNotSet(BeatSaberResources.Sprites.background);
         material.SetValueIfNotSet(GameResources.UINoGlowMaterial);
+
+        var component = holder.Component;
         //adding image
         component.Sprite = sprite;
         component.Material = material;
@@ -186,7 +190,7 @@ public static class ComponentExtensions {
             component.GradientColor1 = gradientColor1;
         }
 
-        return component;
+        return holder;
     }
 
     #endregion
@@ -217,10 +221,14 @@ public static class ComponentExtensions {
         ModalSystem.PresentModal(comp, screen, animated);
     }
 
-    public static T WithModal<T, TModal>(this T comp, TModal modal, bool animated = true)
-        where T : ButtonBase where TModal : IModal, IReactiveComponent {
+    public static T WithModal<T, TModal>(
+        this T holder,
+        TModal modal,
+        bool animated = true
+    ) where T : IComponentHolder<ButtonBase> where TModal : IModal, IReactiveComponent {
+        var comp = holder.Component;
         comp.OnClick += () => modal.Present(comp.ContentTransform, animated);
-        return comp;
+        return holder;
     }
 
     #endregion
