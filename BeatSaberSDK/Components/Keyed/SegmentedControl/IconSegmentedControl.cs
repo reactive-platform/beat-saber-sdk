@@ -27,7 +27,7 @@ namespace Reactive.BeatSaber.Components {
                     Material = BeatSaberResources.Materials.uiAdditiveGlowMaterial
                 },
                 Latching = true,
-                Colors = UIStyle.ButtonColorSet,
+                Colors = BeatSaberStyle.ButtonColorSet,
                 OnStateChanged = _ => SelectSelf()
             }.Bind(ref _button).Use();
         }

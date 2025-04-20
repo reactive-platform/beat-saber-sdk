@@ -97,8 +97,8 @@ namespace Reactive.BeatSaber.Components {
                     GradientDirection = ImageView.GradientDirection.Vertical
                 },
 
-                Skew = UIStyle.Skew,
-                Colors = UIStyle.PrimaryButtonColorSet
+                Skew = BeatSaberStyle.Skew,
+                Colors = BeatSaberStyle.PrimaryButtonColorSet
             }.With(
                 x => {
                     new Image {

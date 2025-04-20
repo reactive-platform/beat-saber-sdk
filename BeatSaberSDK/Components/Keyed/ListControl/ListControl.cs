@@ -168,7 +168,7 @@ namespace Reactive.BeatSaber.Components {
             }.With(
                 x => {
                     x.AsFlexGroup();
-                    x.AsBackground(color: UIStyle.InputColorSet.Color);
+                    x.AsBackground(color: BeatSaberStyle.InputColorSet.Color);
                 }
             ).Use();
         }

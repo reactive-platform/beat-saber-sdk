@@ -52,7 +52,7 @@ namespace Reactive.BeatSaber.Components {
                 Colors = new SimpleColorSet {
                     ActiveColor = Color.white.ColorWithAlpha(0.5f),
                     HoveredColor = Color.white.ColorWithAlpha(0.3f),
-                    Color = UIStyle.ControlColorSet.Color
+                    Color = BeatSaberStyle.ControlColorSet.Color
                 },
                 
                 GradientColors1 = new SimpleColorSet {
@@ -92,7 +92,7 @@ namespace Reactive.BeatSaber.Components {
         protected virtual void OnInteractableChanged(bool interactable) { }
         
         protected override void OnInitialize() {
-            Skew = UIStyle.Skew;
+            Skew = BeatSaberStyle.Skew;
         }
 
         #endregion

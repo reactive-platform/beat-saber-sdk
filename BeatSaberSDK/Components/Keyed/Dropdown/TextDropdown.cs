@@ -46,7 +46,7 @@ namespace Reactive.BeatSaber.Components {
                     },
                     Colors = new StateColorSet {
                         States = {
-                            GraphicState.Hovered.WithColor(UIStyle.ControlColorSet.HoveredColor),
+                            GraphicState.Hovered.WithColor(BeatSaberStyle.ControlColorSet.HoveredColor),
                             GraphicState.None.WithColor(Color.clear)
                         }
                     },
@@ -62,7 +62,7 @@ namespace Reactive.BeatSaber.Components {
             #region Callbacks
 
             public override void OnCellStateChange(bool selected) {
-                _label.Color = selected ? UIStyle.SelectedTextColor : UIStyle.TextColor;
+                _label.Color = selected ? BeatSaberStyle.SelectedTextColor : BeatSaberStyle.TextColor;
             }
 
             #endregion

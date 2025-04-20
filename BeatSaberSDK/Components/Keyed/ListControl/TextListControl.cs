@@ -25,7 +25,7 @@ namespace Reactive.BeatSaber.Components {
         }
 
         protected override GameObject Construct() {
-            var colorSet = UIStyle.TextColorSet;
+            var colorSet = BeatSaberStyle.TextColorSet;
             colorSet.NotInteractableColor = colorSet.Color;
             return new LabelButton {
                 Latching = true,

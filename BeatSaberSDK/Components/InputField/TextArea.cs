@@ -76,7 +76,7 @@ namespace Reactive.BeatSaber.Components {
             set => SetInputEnabled(value);
         }
 
-        private static readonly Color placeholderColor = UIStyle.InactiveTextColor;
+        private static readonly Color placeholderColor = BeatSaberStyle.InactiveTextColor;
         private static readonly Color textColor = Color.white;
 
         private bool _focused;
@@ -155,8 +155,8 @@ namespace Reactive.BeatSaber.Components {
                     new Image {
                         Sprite = null,
                         PreserveAspect = true,
-                        Skew = UIStyle.Skew,
-                        Color = UIStyle.SecondaryTextColor
+                        Skew = BeatSaberStyle.Skew,
+                        Color = BeatSaberStyle.SecondaryTextColor
                     }.AsFlexItem(
                         size: new() { x = 4f, y = "auto" },
                         margin: new() { left = 1f }
@@ -167,7 +167,7 @@ namespace Reactive.BeatSaber.Components {
                         Alignment = TextAlignmentOptions.MidlineLeft,
                         Overflow = TextOverflowModes.Ellipsis,
                         FontStyle = FontStyles.Italic,
-                        Color = UIStyle.InactiveTextColor,
+                        Color = BeatSaberStyle.InactiveTextColor,
                         FontSizeMin = 3f,
                         FontSizeMax = 4f,
                         EnableAutoSizing = true
@@ -176,7 +176,7 @@ namespace Reactive.BeatSaber.Components {
                             //caret
                             new Image {
                                 Sprite = GameResources.CaretIcon,
-                                Skew = UIStyle.Skew,
+                                Skew = BeatSaberStyle.Skew,
                                 Enabled = false
                             }.AsRectItem(
                                 sizeDelta: new() { x = 0.6f, y = 4f },

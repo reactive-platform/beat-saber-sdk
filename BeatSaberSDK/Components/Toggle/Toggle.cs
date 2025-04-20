@@ -29,16 +29,16 @@ namespace Reactive.BeatSaber.Components {
 
         private static readonly StateColorSet defaultKnobColors = new() {
             States = {
-                GraphicState.Active.WithColor(UIStyle.ControlButtonColorSet.ActiveColor),
-                GraphicState.None.WithColor(UIStyle.ControlColorSet.Color),
+                GraphicState.Active.WithColor(BeatSaberStyle.ControlButtonColorSet.ActiveColor),
+                GraphicState.None.WithColor(BeatSaberStyle.ControlColorSet.Color),
 
                 GraphicState.NonInteractable
                     .And(GraphicState.Active)
-                    .WithColor(UIStyle.ControlButtonColorSet.ActiveColor.ColorWithAlpha(0.7f)),
+                    .WithColor(BeatSaberStyle.ControlButtonColorSet.ActiveColor.ColorWithAlpha(0.7f)),
 
                 GraphicState.NonInteractable
                     .And(GraphicState.None)
-                    .WithColor(UIStyle.ControlColorSet.Color.ColorWithAlpha(0.2f))
+                    .WithColor(BeatSaberStyle.ControlColorSet.Color.ColorWithAlpha(0.2f))
             }
         };
 
@@ -92,12 +92,12 @@ namespace Reactive.BeatSaber.Components {
         private void LerpText(float switchAmount) {
             _onLabel.Color = Color.Lerp(
                 Color.clear,
-                UIStyle.TextColorSet.Color,
+                BeatSaberStyle.TextColorSet.Color,
                 switchAmount
             );
             _offLabel.Color = Color.Lerp(
                 Color.clear,
-                UIStyle.TextColorSet.NotInteractableColor,
+                BeatSaberStyle.TextColorSet.NotInteractableColor,
                 1f - switchAmount
             );
         }
@@ -141,7 +141,7 @@ namespace Reactive.BeatSaber.Components {
                     PixelsPerUnit = 12f,
                     Material = GameResources.UINoGlowMaterial
                 },
-                Colors = UIStyle.ControlButtonColorSet,
+                Colors = BeatSaberStyle.ControlButtonColorSet,
                 OnClick = () => {
                     _active = !_active;
                     Active = _active;

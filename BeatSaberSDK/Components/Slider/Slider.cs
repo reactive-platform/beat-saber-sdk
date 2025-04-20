@@ -130,10 +130,10 @@ namespace Reactive.BeatSaber.Components {
                     }
                 }.With(
                     x => {
-                        var staticColor = UIStyle.InputColorSet.Color;
+                        var staticColor = BeatSaberStyle.InputColorSet.Color;
                         var animatedSet = new SimpleColorSet {
                             HoveredColor = Color.white.ColorWithAlpha(0.3f),
-                            Color = UIStyle.InputColorSet.Color
+                            Color = BeatSaberStyle.InputColorSet.Color
                         };
 
                         var image = x.Image;
@@ -166,7 +166,7 @@ namespace Reactive.BeatSaber.Components {
                             PixelsPerUnit = 12f,
                             Material = GameResources.UINoGlowMaterial
                         },
-                        Colors = UIStyle.InputColorSet,
+                        Colors = BeatSaberStyle.InputColorSet,
                         Children = {
                             //sliding area
                             new Layout {

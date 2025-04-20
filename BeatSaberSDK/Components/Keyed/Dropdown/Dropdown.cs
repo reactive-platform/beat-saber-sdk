@@ -208,7 +208,7 @@ namespace Reactive.BeatSaber.Components {
                         PixelsPerUnit = 12f,
                         Material = GameResources.UINoGlowMaterial
                     },
-                    Colors = UIStyle.ControlColorSet,
+                    Colors = BeatSaberStyle.ControlColorSet,
                
                 Children = {
                     new TCell {
@@ -236,7 +236,7 @@ namespace Reactive.BeatSaber.Components {
 
         protected override void OnInitialize() {
             this.AsFlexItem(size: new() { x = 36f, y = 6f });
-            Skew = UIStyle.Skew;
+            Skew = BeatSaberStyle.Skew;
             _items.ItemAddedEvent += HandleItemAdded;
             _items.ItemRemovedEvent += HandleItemRemoved;
             _items.AllItemsRemovedEvent += HandleAllItemsRemoved;

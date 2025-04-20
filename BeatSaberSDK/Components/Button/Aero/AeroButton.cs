@@ -21,9 +21,9 @@ namespace Reactive.BeatSaber.Components {
             Image.GradientDirection = ImageView.GradientDirection.Vertical;
             Image.GradientColor0 = Color.white;
             Colors = new SimpleColorSet {
-                HoveredColor = UIStyle.InputColorSet.HoveredColor.ColorWithAlpha(1f),
-                Color = UIStyle.InputColorSet.Color,
-                NotInteractableColor = UIStyle.InputColorSet.NotInteractableColor
+                HoveredColor = BeatSaberStyle.InputColorSet.HoveredColor.ColorWithAlpha(1f),
+                Color = BeatSaberStyle.InputColorSet.Color,
+                NotInteractableColor = BeatSaberStyle.InputColorSet.NotInteractableColor
             };
             GradientColors1 = new SimpleColorSet {
                 Color = defaultGradientColor,

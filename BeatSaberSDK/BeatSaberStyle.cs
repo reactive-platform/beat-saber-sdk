@@ -1,9 +1,13 @@
+using JetBrains.Annotations;
 using Reactive.Components;
 using UnityEngine;
 
 namespace Reactive.BeatSaber {
-    //TODO: Rename to BeatSaberStyle and make public
-    internal static class UIStyle {
+    /// <summary>
+    /// Provides default colors and measurements for Beat Saber components.
+    /// </summary>
+    [PublicAPI]
+    public static class BeatSaberStyle {
         public static readonly float Skew = 0.18f;
 
         public static ReadOnlyColorSet InputColorSet => new() {
