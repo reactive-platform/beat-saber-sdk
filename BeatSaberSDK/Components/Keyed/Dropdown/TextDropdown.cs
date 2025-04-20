@@ -9,7 +9,7 @@ namespace Reactive.BeatSaber.Components {
     public class TextDropdown<TKey> : Dropdown<TKey, string, TextDropdown<TKey>.ComponentCell> {
         #region Cell
 
-        public class ComponentCell : KeyedControlComponentCell<TKey, string>, ISkewedComponent, IPreviewableCell {
+        public class ComponentCell : KeyedControlCell<TKey, string>, ISkewedComponent, IPreviewableCell {
             #region Setup
 
             public bool UsedAsPreview {

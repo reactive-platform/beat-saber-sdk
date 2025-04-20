@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace Reactive.BeatSaber.Components {
     [PublicAPI]
-    public class IconSegmentedControl<TKey> : SegmentedControl<TKey, Sprite, IconKeyedControlComponentCell<TKey>> { }
+    public class IconSegmentedControl<TKey> : SegmentedControl<TKey, Sprite, IconKeyedControlCell<TKey>> { }
 
     [PublicAPI]
-    public class IconKeyedControlComponentCell<TKey> : KeyedControlComponentCell<TKey, Sprite> {
+    public class IconKeyedControlCell<TKey> : KeyedControlCell<TKey, Sprite> {
         public ImageButton Button => _button;
 
         private ImageButton _button = null!;

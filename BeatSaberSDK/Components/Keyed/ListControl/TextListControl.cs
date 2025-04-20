@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace Reactive.BeatSaber.Components {
     [PublicAPI]
-    public class TextListControl<TKey> : ListControl<TKey, string, TextKeyedControlComponentCell<TKey>> { }
+    public class TextListControl<TKey> : ListControl<TKey, string, TextKeyedControlCell<TKey>> { }
 
     [PublicAPI]
-    public class TextKeyedControlComponentCell<TKey> : KeyedControlComponentCell<TKey, string>, IPreviewableCell {
+    public class TextKeyedControlCell<TKey> : KeyedControlCell<TKey, string>, IPreviewableCell {
         public bool UsedAsPreview {
             set => _button.Interactable = !value;
         }

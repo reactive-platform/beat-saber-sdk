@@ -8,8 +8,8 @@ using UnityEngine;
 
 namespace Reactive.BeatSaber.Components {
     [PublicAPI]
-    public class ListControl<TKey, TParam, TCell> : ReactiveComponent, IKeyedControlComponent<TKey, TParam>
-        where TCell : IReactiveComponent, ILayoutItem, IPreviewableCell, IKeyedControlComponentCellBase<TKey, TParam>, new() {
+    public class ListControl<TKey, TParam, TCell> : ReactiveComponent, IKeyedControl<TKey, TParam>
+        where TCell : IReactiveComponent, ILayoutItem, IPreviewableCell, IKeyedControlCellBase<TKey, TParam>, new() {
         #region ListControl
 
         public IDictionary<TKey, TParam> Items => _items;

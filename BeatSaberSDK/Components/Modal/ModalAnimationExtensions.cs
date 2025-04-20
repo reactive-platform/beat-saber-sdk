@@ -8,11 +8,11 @@ namespace Reactive.BeatSaber.Components {
     public static class ModalAnimationExtensions {
         #region JumpAnimation
 
-        public static T WithJumpAnimation<T>(this T modal, AnimationDuration? duration = null) where T : ModalComponentBase {
+        public static T WithJumpAnimation<T>(this T modal, AnimationDuration? duration = null) where T : ModalBase {
             var group = modal.Content.GetOrAddComponent<CanvasGroup>();
             var dur = duration.GetValueOrDefault(150.ms());
             
-            modal.OpenAnimator = ValueUtils.Animate<ModalComponentBase>(
+            modal.OpenAnimator = ValueUtils.Animate<ModalBase>(
                 modal,
                 (x, y) => {
                     Animate(x, y);
@@ -20,7 +20,7 @@ namespace Reactive.BeatSaber.Components {
                 },
                 dur
             );
-            modal.CloseAnimator = ValueUtils.Animate<ModalComponentBase>(
+            modal.CloseAnimator = ValueUtils.Animate<ModalBase>(
                 modal,
                 (x, y) => {
                     Animate(x, 1f - y);
@@ -30,7 +30,7 @@ namespace Reactive.BeatSaber.Components {
             );
             return modal;
 
-            static void Animate(ModalComponentBase x, float t) {
+            static void Animate(ModalBase x, float t) {
                 // X scale curve
                 var xScale = t <= 0.3f ?
                     Mathf.Lerp(0.85f, 1.065f, t / 0.3f) :      // Linear interpolation from 0.85 to 1.065
@@ -50,7 +50,7 @@ namespace Reactive.BeatSaber.Components {
         #region AlphaAnimation
 
         private class AlphaModalModule : IReactiveModule {
-            public AlphaModalModule(ModalComponentBase modal, Func<GameObject> objectAccessor, float targetAlpha) {
+            public AlphaModalModule(ModalBase modal, Func<GameObject> objectAccessor, float targetAlpha) {
                 _modal = modal;
                 _objectAccessor = objectAccessor;
                 _targetAlpha = targetAlpha;
@@ -58,12 +58,12 @@ namespace Reactive.BeatSaber.Components {
                 _modal.ModalOpenedEvent += HandleModalOpened;
             }
 
-            private readonly ModalComponentBase _modal;
+            private readonly ModalBase _modal;
             private readonly Func<GameObject> _objectAccessor;
             private readonly float _targetAlpha;
 
             private CanvasGroup? _group;
-            private IObjectAnimator<ModalComponentBase>? _animator;
+            private IObjectAnimator<ModalBase>? _animator;
             private bool _reverse;
 
             public void OnUpdate() {
@@ -110,7 +110,7 @@ namespace Reactive.BeatSaber.Components {
             this T modal,
             Func<GameObject> objectAccessor,
             float targetAlpha = 0.2f
-        ) where T : ModalComponentBase {
+        ) where T : ModalBase {
             var module = new AlphaModalModule(modal, objectAccessor, targetAlpha);
             modal.BindModule(module);
             return modal;

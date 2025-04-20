@@ -10,8 +10,8 @@ namespace Reactive.BeatSaber.Components {
     /// <typeparam name="TParam">A param to be passed with key to provide additional info</typeparam>
     /// <typeparam name="TCell">A cell component</typeparam>
     [PublicAPI]
-    public class Dropdown<TKey, TParam, TCell> : ReactiveComponent, ISkewedComponent, IKeyedControlComponent<TKey, TParam>
-        where TCell : IReactiveComponent, ILayoutItem, ISkewedComponent, IPreviewableCell, IKeyedControlComponentCell<TKey, TParam>, new() {
+    public class Dropdown<TKey, TParam, TCell> : ReactiveComponent, ISkewedComponent, IKeyedControl<TKey, TParam>
+        where TCell : IReactiveComponent, ILayoutItem, ISkewedComponent, IPreviewableCell, IKeyedControlCell<TKey, TParam>, new() {
         #region OptionsModal
 
         private struct DropdownOption {
@@ -27,10 +27,10 @@ namespace Reactive.BeatSaber.Components {
             }
         }
 
-        private class OptionsModal : ModalComponentBase {
+        private class OptionsModal : ModalBase {
             #region CellWrapper
 
-            public class DropdownCellWrapper : TableComponentCell<DropdownOption> {
+            public class DropdownCellWrapper : TableCell<DropdownOption> {
                 #region Setup
 
                 private TCell _cell = default!;
