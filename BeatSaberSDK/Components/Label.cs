@@ -136,7 +136,7 @@ public class Label : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutI
 
     protected override void Construct(RectTransform rect) {
         _text = rect.gameObject.AddComponent<CurvedTextMeshPro>();
-        _text.RegisterDirtyLayoutCallback(RefreshLayout);
+        _text.RegisterDirtyLayoutCallback(ScheduleLayoutRecalculation);
         _text.fontSharedMaterial = GameResources.UIFontMaterial;
     }
 
@@ -147,7 +147,7 @@ public class Label : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutI
     }
 
     protected override void OnStart() {
-        RefreshLayout();
+        ScheduleLayoutRecalculation();
     }
 
     public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
