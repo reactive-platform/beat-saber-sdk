@@ -1,3 +1,4 @@
+using System;
 using HMUI;
 using JetBrains.Annotations;
 using Reactive.Components;
@@ -136,7 +137,7 @@ public class Label : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutI
 
     protected override void Construct(RectTransform rect) {
         _text = rect.gameObject.AddComponent<CurvedTextMeshPro>();
-        _text.RegisterDirtyLayoutCallback(ScheduleLayoutRecalculation);
+        _text.RegisterDirtyLayoutCallback(RequestLeafRecalculation);
         _text.fontSharedMaterial = GameResources.UIFontMaterial;
     }
 
@@ -147,8 +148,10 @@ public class Label : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutI
     }
 
     protected override void OnStart() {
-        ScheduleLayoutRecalculation();
+        RequestLeafRecalculation();
     }
+
+    public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
 
     public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
         var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
@@ -164,5 +167,10 @@ public class Label : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutI
             x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(textSize.x, measuredWidth),
             y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(textSize.y, measuredHeight)
         };
+    }
+
+    private void RequestLeafRecalculation() {
+        LeafLayoutUpdatedEvent?.Invoke(this);
+        ScheduleLayoutRecalculation();
     }
 }

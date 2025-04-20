@@ -1,3 +1,4 @@
+using System;
 using HMUI;
 using JetBrains.Annotations;
 using Reactive.Components;
@@ -123,6 +124,8 @@ public class Image : ReactiveComponent, IComponentHolder<Image>, ISkewedComponen
         _image = rect.gameObject.AddComponent<FixedImageView>();
         Material = GameResources.UINoGlowMaterial;
     }
+
+    public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
 
     public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
         var nativeSize = _image.sprite.rect.size;
