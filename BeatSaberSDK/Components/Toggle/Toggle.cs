@@ -21,6 +21,7 @@ namespace Reactive.BeatSaber.Components {
             set {
                 _interactable = value;
                 _backgroundButton.Interactable = value;
+                UpdateAnimations(_progressValue.Value);
                 NotifyPropertyChanged();
             }
         }
@@ -34,11 +35,10 @@ namespace Reactive.BeatSaber.Components {
 
                 GraphicState.NonInteractable
                     .And(GraphicState.Active)
-                    .WithColor(BeatSaberStyle.ControlButtonColorSet.ActiveColor.ColorWithAlpha(0.7f)),
+                    .WithColor(BeatSaberStyle.ControlColorSet.Color.ColorWithAlpha(0.45f)),
 
                 GraphicState.NonInteractable
-                    .And(GraphicState.None)
-                    .WithColor(BeatSaberStyle.ControlColorSet.Color.ColorWithAlpha(0.2f))
+                    .WithColor(BeatSaberStyle.ControlColorSet.Color.ColorWithAlpha(0.45f)),
             }
         };
 
@@ -106,7 +106,7 @@ namespace Reactive.BeatSaber.Components {
             var state = GraphicState.None.AddIf(GraphicState.NonInteractable, !Interactable);
             var color = Color.Lerp(
                 KnobColors.GetColor(state),
-                KnobColors.GetColor(state.And(GraphicState.Active)),
+                KnobColors.GetColor(state.AddIf(GraphicState.Active, Active)),
                 switchAmount
             );
             _knobImage.Color = color;

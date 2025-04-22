@@ -33,7 +33,7 @@ namespace Reactive.BeatSaber {
             ActiveColor = new(0f, 0.75f, 1f, 1f),
             HoveredColor = Color.white.ColorWithAlpha(0.2f),
             Color = Color.black.ColorWithAlpha(0.5f),
-            NotInteractableColor = Color.black.ColorWithAlpha(0.2f)
+            NotInteractableColor = Color.black.ColorWithAlpha(0.35f)
         };
 
         public static ReadOnlyColorSet ButtonColorSet => new() {
