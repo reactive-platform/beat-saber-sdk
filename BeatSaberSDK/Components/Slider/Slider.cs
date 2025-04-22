@@ -68,11 +68,14 @@ namespace Reactive.BeatSaber.Components {
             _text.Text = _valueFormatter?.Invoke(Value) ?? $"{Value}";
             var halfPassed = handlePos > MaxHandlePosition / 2f;
 
-            var measuredSize = _text.Measure(0, MeasureMode.Undefined, 0, MeasureMode.Undefined);
+            var measuredSize = _text.Measure(int.MaxValue, MeasureMode.AtMost, int.MaxValue, MeasureMode.AtMost);
             var textSize = measuredSize.x / 2f + 1f;
-
             var textPos = halfPassed ? handlePos - textSize : handlePos + textSize + _handle.rect.width;
-            _text.ContentTransform.localPosition = new(textPos, 0f, 0f);
+
+            var text = _text.ContentTransform;
+            text.localPosition = new(textPos, 0f, 0f);
+            text.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, measuredSize.x);
+            text.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, measuredSize.y);
         }
 
         protected override void PlaceHandle(float pos) {
