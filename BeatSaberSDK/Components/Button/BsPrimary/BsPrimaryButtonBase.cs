@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using HMUI;
 using JetBrains.Annotations;
 using Reactive.Components;
@@ -16,108 +16,138 @@ namespace Reactive.BeatSaber.Components {
         public Color Color {
             get => _color;
             set {
-                _color = value;
+                _color = value.ColorWithAlpha(1f);
+
+                Color.RGBToHSV(_color, out var h, out var s, out var v);
+
+                _highlightColor = Color.HSVToRGB(h, s, v * 1.2f);
+                _border.Color = _highlightColor;
+
                 RefreshColor();
             }
         }
 
         public float Skew {
-            get => _button.Skew;
+            get => _background.Skew;
             set {
-                _button.Skew = value;
+                _background.Skew = value;
                 _border.Skew = value;
+                OnSkewChanged(value);
             }
         }
 
         public bool Interactable {
             get => _button.Interactable;
             set {
+                _background.Material = value ? GameResources.AnimatedButtonMaterial : GameResources.UINoGlowMaterial;
+                _border.Enabled = value;
                 _button.Interactable = value;
+
                 RefreshColor();
             }
         }
 
-        public bool IsPressed => _button.IsPressed;
+        public GraphicState GraphicState => GraphicState.None
+            .AddIf(GraphicState.Hovered, IsHovered)
+            .AddIf(GraphicState.Pressed, IsPressed)
+            .AddIf(GraphicState.NonInteractable, !Interactable);
 
+        public bool IsPressed => _button.IsPressed;
         public bool IsHovered => _button.IsHovered;
 
         public Action? OnClick { get; set; }
 
-        private Color _color;
-
         #endregion
 
-        #region Abstraction
+        #region Colors
 
-        protected virtual void RefreshColor() {
+        private Color _highlightColor;
+        private Color _color;
+
+        private void RefreshColor() {
             if (Interactable) {
-                _button.Image.GradientColor0 = _color;
-                _border.Color = _color;
+                var baseColor = IsHovered ? _highlightColor : _color;
 
-                var color = _color;
-                color.a /= 2f;
-                Background.GradientColor1 = color;
+                _background.GradientColor0 = baseColor;
+                _background.GradientColor1 = baseColor.ColorWithAlpha(0.5f);
+                _background.Color = Color.white;
+                _background.UseGradient = true;
             } else {
-                Background.GradientColor0 = Color.white;
-                Background.GradientColor1 = Color.white;
+                _background.GradientColor0 = Color.white;
+                _background.GradientColor1 = Color.white;
+                _background.Color = Color.black.ColorWithAlpha(0.25f);
+                _background.UseGradient = false;
             }
-        }
 
-        protected virtual void OnInteractableChanged(bool interactable) {
-            Background.Color = interactable ? Color.white : _button.Colors!.GetColor(_button.GraphicState);
-            Background.Material = interactable ? buttonMaterial : GameResources.UINoGlowMaterial;
-            _border.Enabled = interactable;
+            OnColorChanged();
         }
 
         #endregion
 
         #region Setup
 
-        private static readonly Material buttonMaterial = Resources
-            .FindObjectsOfTypeAll<Material>()
-            .First(static x => x.name == "AnimatedButton");
+        protected ILayoutController? LayoutController {
+            get => _button.LayoutController;
+            set => _button.LayoutController = value;
+        }
 
-        private static readonly Material buttonBorderMaterial = Resources
-            .FindObjectsOfTypeAll<Material>()
-            .First(static x => x.name == "AnimatedButtonBorder");
-
-        private Image Background => _button.Image;
         ButtonBase IComponentHolder<ButtonBase>.Component => _button;
 
         private Image _border = null!;
-        private ImageButton _button = null!;
+        private Image _background = null!;
+        private Clickable _button = null!;
 
         protected override GameObject Construct() {
-            return new ImageButton {
-                Image = {
-                    Material = buttonMaterial,
-                    Sprite = BeatSaberResources.Sprites.background,
-                    PixelsPerUnit = 15f,
-                    UseGradient = true,
-                    GradientDirection = ImageView.GradientDirection.Vertical
+            return new Clickable {
+                OnClick = () => {
+                    OnClick?.Invoke();
+                    GameResources.ButtonClickSignal.Raise();
                 },
+                
+                Children = {
+                    // Background 
+                    new Image {
+                            Material = GameResources.AnimatedButtonMaterial,
+                            Sprite = BeatSaberResources.Sprites.background,
+                            PixelsPerUnit = 15f,
+                            UseGradient = true,
+                            GradientDirection = ImageView.GradientDirection.Vertical
+                        }
+                        .WithRectExpand()
+                        .Bind(ref _background),
 
-                Skew = BeatSaberStyle.Skew,
-                Colors = BeatSaberStyle.PrimaryButtonColorSet
-            }.With(
-                x => {
+                    // Border
                     new Image {
                             Sprite = BeatSaberResources.Sprites.frame,
-                            Material = buttonBorderMaterial,
+                            Material = GameResources.AnimatedButtonBorderMaterial,
                             PixelsPerUnit = 15f
                         }
                         .WithRectExpand()
                         .Bind(ref _border)
-                        .Use(x.ContentTransform);
-
-                    ConstructContent()
-                        .WithRectExpand()
-                        .Use(x.ContentTransform);
                 }
-            ).Bind(ref _button).Use();
+            }.With(x => {
+                    x.WithListener(
+                        y => y.IsHovered,
+                        _ => RefreshColor()
+                    ).WithListener(
+                        y => y.IsPressed,
+                        _ => RefreshColor()
+                    );
+
+                    x.Children.AddRange(ConstructContent());
+                }
+            ).AsFlexGroup().Bind(ref _button).Use();
         }
 
-        protected abstract IReactiveComponent ConstructContent();
+        protected abstract IEnumerable<IReactiveComponent> ConstructContent();
+
+        protected virtual void OnSkewChanged(float skew) { }
+        protected virtual void OnColorChanged() { }
+
+        protected override void OnInitialize() {
+            Skew = BeatSaberStyle.Skew;
+            Color = new(0f, 0.5f, 1f);
+        }
 
         #endregion
     }

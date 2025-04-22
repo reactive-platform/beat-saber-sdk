@@ -32,16 +32,22 @@ public class GameResources : ScriptableObject {
     internal static void Init() {
         if (_instance != null) return;
         _instance = CreateInstance<GameResources>();
+        
         _instance.buttonClickSignal = Find<Signal>("UIButtonWasPressed");
+        
         _instance.arrowIcon = Find<Sprite>("ArrowIcon");
         _instance.caretIcon = Find<Sprite>("Caret");
         _instance.verticalIndicatorIcon = Find<Sprite>("VerticalRoundRect8");
+        
         _instance.uiNoGlowMaterial = Find<Material>("UINoGlow");
         _instance.uiFontMaterial = Find<Material>(
             "Teko-Medium SDF Curved Softer",
             x => x.mainTexture.name == "Teko-Medium SDF Atlas"
         );
         _instance.uiFogBackgroundMaterial = Find<Material>("UIFogBG");
+        
+        _instance.animatedButtonMaterial = Find<Material>("AnimatedButton");
+        _instance.animatedButtonBorderMaterial = Find<Material>("AnimatedButtonBorder");
     }
 
     private static T Find<T>(string name, Func<T, bool> func = null) where T : Object {
@@ -63,8 +69,19 @@ public class GameResources : ScriptableObject {
     public Sprite caretIcon;
     public Sprite verticalIndicatorIcon;
 
+    internal Material animatedButtonMaterial;
+    internal Material animatedButtonBorderMaterial;
+
     #endregion
 
+    #region Internal
+
+    internal static Material AnimatedButtonMaterial => _instance.animatedButtonMaterial;
+    
+    internal static Material AnimatedButtonBorderMaterial => _instance.animatedButtonBorderMaterial;
+
+    #endregion
+    
     #region Static
 
     public static Signal ButtonClickSignal => _instance.buttonClickSignal;

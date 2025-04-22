@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Reactive.Components;
 using UnityEngine;
@@ -12,8 +13,11 @@ namespace Reactive.BeatSaber.Components {
         #region UI Props
 
         public bool ShowUnderline {
-            get => _underline.Enabled;
-            set => _underline.Enabled = value;
+            get => _showUnderline;
+            set {
+                _showUnderline = value;
+                _underline.Enabled = value && Interactable;
+            }
         }
 
         public float Skew {
@@ -21,6 +25,7 @@ namespace Reactive.BeatSaber.Components {
             set {
                 _button.Skew = value;
                 _underline.Skew = value;
+                OnSkewChanged(value);
             }
         }
 
@@ -28,48 +33,66 @@ namespace Reactive.BeatSaber.Components {
             get => _button.Interactable;
             set {
                 _button.Interactable = value;
-                OnInteractableChanged(value);
+                _underline.Enabled = _showUnderline && value;
+                OnGraphicStateChanged();
             }
         }
+        
+        public GraphicState GraphicState => _button.WrappedButton.GraphicState;
 
         public bool IsPressed => _button.IsPressed;
-
         public bool IsHovered => _button.IsHovered;
 
         public Action? OnClick { get; set; }
+
+        private bool _showUnderline;
 
         #endregion
 
         #region Setup
 
-        ButtonBase IComponentHolder<ButtonBase>.Component => _button;
-        
+        protected ILayoutController? LayoutController {
+            get => _button.LayoutController;
+            set => _button.LayoutController = value;
+        }
+
+        ButtonBase IComponentHolder<ButtonBase>.Component => _button.WrappedButton;
+
         private Image _underline = null!;
-        private ImageButton _button = null!;
+        private BackgroundButton _button = null!;
 
         protected override GameObject Construct() {
-            return new ImageButton {
+            return new BackgroundButton {
                 Colors = new SimpleColorSet {
                     ActiveColor = Color.white.ColorWithAlpha(0.5f),
                     HoveredColor = Color.white.ColorWithAlpha(0.3f),
-                    Color = BeatSaberStyle.ControlColorSet.Color
+                    Color = BeatSaberStyle.ControlColorSet.Color,
+                    NotInteractableColor = BeatSaberStyle.ControlColorSet.NotInteractableColor
                 },
-                
+
                 GradientColors1 = new SimpleColorSet {
                     HoveredColor = Color.white,
                     Color = Color.white.ColorWithAlpha(0.5f)
                 },
-                
+
                 Image = {
                     GradientColor0 = Color.white,
                     UseGradient = true,
                     Sprite = BeatSaberResources.Sprites.background,
                     PixelsPerUnit = 12f
                 },
-                
+
                 OnClick = () => OnClick?.Invoke()
-            }.With(
-                x => {
+            }.With(x => {
+                    x.WrappedButton
+                        .WithListener(
+                            y => y.IsHovered,
+                            _ => OnGraphicStateChanged()
+                        ).WithListener(
+                            y => y.IsPressed,
+                            _ => OnGraphicStateChanged()
+                        );
+
                     new Image {
                             Sprite = BeatSaberResources.Sprites.backgroundUnderline,
                             PixelsPerUnit = 12f,
@@ -80,19 +103,21 @@ namespace Reactive.BeatSaber.Components {
                         .Bind(ref _underline)
                         .Use(x.ContentTransform);
 
-                    ConstructContent()
-                        .WithRectExpand()
-                        .Use(x.ContentTransform);
+                    x.Children.AddRange(ConstructContent());
                 }
-            ).Bind(ref _button).Use();
+            ).AsFlexGroup().Bind(ref _button).Use();
         }
 
-        protected abstract IReactiveComponent ConstructContent();
+        protected abstract IEnumerable<IReactiveComponent> ConstructContent();
 
-        protected virtual void OnInteractableChanged(bool interactable) { }
-        
+        protected virtual void OnSkewChanged(float skew) { }
+        protected virtual void OnGraphicStateChanged() { }
+
         protected override void OnInitialize() {
             Skew = BeatSaberStyle.Skew;
+            ShowUnderline = true;
+
+            OnGraphicStateChanged();
         }
 
         #endregion

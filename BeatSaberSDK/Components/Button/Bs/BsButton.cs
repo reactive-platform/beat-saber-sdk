@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Reactive.Components;
 using TMPro;
@@ -52,11 +53,6 @@ public class BsButton : BsButtonBase, IComponentHolder<Label> {
         set => _label.Font = value;
     }
 
-    public Material Material {
-        get => _label.Material;
-        set => _label.Material = value;
-    }
-
     public bool EnableWrapping {
         get => _label.EnableWrapping;
         set => _label.EnableWrapping = value;
@@ -74,11 +70,37 @@ public class BsButton : BsButtonBase, IComponentHolder<Label> {
 
     #endregion
 
+    #region Setup
+
     Label IComponentHolder<Label>.Component => _label;
-    
+
     private Label _label = null!;
 
-    protected override IReactiveComponent ConstructContent() {
-        return new Label().Bind(ref _label);
+    protected override IEnumerable<IReactiveComponent> ConstructContent() {
+        return [
+            new Label()
+                .AsFlexItem(size: "auto")
+                .Bind(ref _label)
+        ];
     }
+
+    protected override void OnInitialize() {
+        base.OnInitialize();
+        FontStyle |= FontStyles.UpperCase;
+        Alignment = TextAlignmentOptions.Capline;
+    }
+
+    protected override void OnSkewChanged(float skew) {
+        ((ISkewedComponent)_label).Skew = skew;
+    }
+
+    protected override void OnGraphicStateChanged() {
+        var alpha = GraphicState.IsInteractable() ?
+            GraphicState.IsHovered() ? 1 : 0.75f
+            : 0.25f;
+
+        _label.Color = Color.white.ColorWithAlpha(alpha);
+    }
+
+    #endregion
 }
