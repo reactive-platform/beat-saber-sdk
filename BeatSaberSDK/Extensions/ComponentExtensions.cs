@@ -102,7 +102,7 @@ public static class ComponentExtensions {
                     if (button is not ISkewedComponent skewed) return;
                     x.Skew = skewed.Skew;
                 }
-            ).AsFlexItem(grow: 1f).Export(out image)
+            ).AsFlexItem(flexGrow: 1f).Export(out image)
         );
         return button;
     }

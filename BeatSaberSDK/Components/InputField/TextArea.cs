@@ -185,7 +185,7 @@ namespace Reactive.BeatSaber.Components {
                                 pivot: new(0f, 0.5f)
                             ).Bind(ref _caret).Use(x.Content);
                         }
-                    ).AsFlexItem(grow: 1f).Bind(ref _label),
+                    ).AsFlexItem(flexGrow: 1f).Bind(ref _label),
 
                     //clear button
                     new BackgroundButton {
@@ -203,7 +203,7 @@ namespace Reactive.BeatSaber.Components {
                         Children = {
                             new Image {
                                 Sprite = BeatSaberResources.Sprites.crossIcon
-                            }.AsFlexItem(grow: 1f, size: "auto")
+                            }.AsFlexItem(flexGrow: 1f, size: "auto")
                         }
                     }.AsFlexItem(
                         size: new() { x = 4f },

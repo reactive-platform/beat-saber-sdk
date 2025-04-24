@@ -41,7 +41,7 @@ namespace Reactive.BeatSaber.Components {
                 Children = {
                     new Layout()
                         .AsFlexGroup()
-                        .AsFlexItem(grow: 1f)
+                        .AsFlexItem(flexGrow: 1f)
                         .WithNativeComponent(out _containerGroup)
                         .WithRectExpand()
                         .Bind(ref _container),
@@ -52,7 +52,7 @@ namespace Reactive.BeatSaber.Components {
                             new Spinner().AsFlexItem(
                                 minSize: new() { x = 2f },
                                 maxSize: new() { x = 10f },
-                                grow: 1f
+                                flexGrow: 1f
                             )
                         }
                     }.AsFlexGroup(padding: 1f).WithRectExpand().Bind(ref _spinner)

@@ -84,7 +84,7 @@ namespace Reactive.BeatSaber.Components {
                             Material = GameResources.UINoGlowMaterial
                         }.Export(out Image image).AsFlexItem(size: 4f)
                     }
-                }.AsFlexItem(grow: 1f).Export(out ColoredButton button).With(
+                }.AsFlexItem(flexGrow: 1f).Export(out ColoredButton button).With(
                     y => {
                         y.WrappedButton.WithListener(
                             x => x.Interactable,
@@ -127,7 +127,7 @@ namespace Reactive.BeatSaber.Components {
                             }.Bind(ref _handleRect)
                         }
                     }.AsFlexItem(
-                        grow: 1f,
+                        flexGrow: 1f,
                         margin: new() { left = "15%", right = "15%", top = 4f, bottom = 4f }
                     ).Bind(ref _handleContainerRect),
                     //

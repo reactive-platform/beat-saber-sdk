@@ -141,7 +141,7 @@ namespace Reactive.BeatSaber.Components {
                     new TCell {
                         UsedAsPreview = true
                     }.AsFlexItem(
-                        grow: 1f,
+                        flexGrow: 1f,
                         margin: new() { left = 5f, right = 5f }
                     ).Bind(ref _cell),
                     //buttons

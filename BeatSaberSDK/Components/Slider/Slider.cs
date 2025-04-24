@@ -129,7 +129,7 @@ namespace Reactive.BeatSaber.Components {
                             ContentTransform = {
                                 localEulerAngles = new(0f, 0f, iconRotation)
                             }
-                        }.AsFlexItem(grow: 1f)
+                        }.AsFlexItem(flexGrow: 1f)
                     }
                 }.With(
                     x => {
@@ -197,12 +197,12 @@ namespace Reactive.BeatSaber.Components {
                                         PixelsPerUnit = 30f
                                     }.Bind(ref _handle).Bind(ref _handleImage)
                                 }
-                            }.AsFlexItem(grow: 1f).Bind(ref _slidingArea),
+                            }.AsFlexItem(flexGrow: 1f).Bind(ref _slidingArea),
                         }
                     }.WithNativeComponent(out _pointerEventsHandler).AsFlexGroup(
                         padding: 1f
                     ).AsFlexItem(
-                        grow: 1f,
+                        flexGrow: 1f,
                         margin: new() { left = 0.5f, right = 0.5f }
                     ).Bind(ref _background),
                     //inc button

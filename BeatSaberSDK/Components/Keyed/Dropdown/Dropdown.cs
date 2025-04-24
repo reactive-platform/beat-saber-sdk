@@ -115,12 +115,12 @@ namespace Reactive.BeatSaber.Components {
                                             CloseInternal();
                                         }
                                     )
-                                    .AsFlexItem(grow: 1f)
+                                    .AsFlexItem(flexGrow: 1f)
                                     .Bind(ref _table)
                             }
                         }.AsBlurBackground().AsFlexGroup(
                             padding: new() { top = 1f, bottom = 1f }
-                        ).AsFlexItem(grow: 1f),
+                        ).AsFlexItem(flexGrow: 1f),
                         //scrollbar
                         new Scrollbar()
                             .AsFlexItem(size: new() { x = 2f })
@@ -213,7 +213,7 @@ namespace Reactive.BeatSaber.Components {
                 Children = {
                     new TCell {
                         UsedAsPreview = true
-                    }.AsFlexItem(grow: 1f).Bind(ref _previewCell),
+                    }.AsFlexItem(flexGrow: 1f).Bind(ref _previewCell),
                     //icon
                     new Image {
                         Sprite = GameResources.ArrowIcon,
