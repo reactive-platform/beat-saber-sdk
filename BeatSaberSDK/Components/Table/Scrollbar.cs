@@ -82,7 +82,7 @@ namespace Reactive.BeatSaber.Components {
                             Sprite = GameResources.ArrowIcon,
                             PreserveAspect = true,
                             Material = GameResources.UINoGlowMaterial
-                        }.Export(out Image image).AsFlexItem(size: 4f)
+                        }.Export(out Image image).AsFlexItem(size: 2.5f)
                     }
                 }.AsFlexItem(flexGrow: 1f).Export(out ColoredButton button).With(
                     y => {
@@ -128,23 +128,24 @@ namespace Reactive.BeatSaber.Components {
                         }
                     }.AsFlexItem(
                         flexGrow: 1f,
-                        margin: new() { left = "15%", right = "15%", top = 4f, bottom = 4f }
+                        size: new() { x = 1.4f },
+                        margin: new() { top = 4f, bottom = 4f }
                     ).Bind(ref _handleContainerRect),
                     //
                     new Layout {
                         Children = {
                             //up button
                             CreateButton(180f, HandleUpButtonClicked)
-                                .AsFlexGroup(alignItems: Align.FlexStart)
+                                .AsFlexGroup(alignItems: Align.FlexStart, justifyContent: Justify.Center)
                                 .Bind(ref _upButton),
                             //down button
                             CreateButton(0f, HandleDownButtonClicked)
-                                .AsFlexGroup(alignItems: Align.FlexEnd)
+                                .AsFlexGroup(alignItems: Align.FlexEnd, justifyContent: Justify.Center)
                                 .Bind(ref _downButton)
                         }
                     }.AsFlexGroup(direction: FlexDirection.Column).WithRectExpand()
                 }
-            }.AsFlexGroup(FlexDirection.Column).Use();
+            }.AsFlexGroup(direction: FlexDirection.Column, alignItems: Align.Center).Use();
         }
 
         protected override void OnInitialize() {
