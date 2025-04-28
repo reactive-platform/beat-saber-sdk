@@ -99,7 +99,7 @@ namespace Reactive.BeatSaber.Components {
             protected override void OnOpen(bool finished) {
                 if (finished) return;
                 var height = Mathf.Clamp(Table.Items.Count, 1, MaxDisplayedItems) * ItemSize + 2;
-                this.WithSizeDelta(40f, height);
+                this.AsFlexItem(size: new() { x = 40f, y = height });
             }
 
             protected override GameObject Construct() {
@@ -126,7 +126,7 @@ namespace Reactive.BeatSaber.Components {
                             .AsFlexItem(size: new() { x = 2f })
                             .With(x => Table.Scrollbar = x)
                     }
-                }.AsFlexGroup(gap: 2f).Use();
+                }.AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false).Use();
             }
 
             #endregion
@@ -202,14 +202,13 @@ namespace Reactive.BeatSaber.Components {
 
         protected override GameObject Construct() {
             return new BackgroundButton {
-         
-                    Image = {
-                        Sprite = BeatSaberResources.Sprites.background,
-                        PixelsPerUnit = 12f,
-                        Material = GameResources.UINoGlowMaterial
-                    },
-                    Colors = BeatSaberStyle.ControlColorSet,
-               
+                Image = {
+                    Sprite = BeatSaberResources.Sprites.background,
+                    PixelsPerUnit = 12f,
+                    Material = GameResources.UINoGlowMaterial
+                },
+                Colors = BeatSaberStyle.ControlColorSet,
+
                 Children = {
                     new TCell {
                         UsedAsPreview = true
