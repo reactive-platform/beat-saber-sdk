@@ -1,4 +1,3 @@
 [submodule "reactive-sdk"]
 	path = reactive-sdk
 	url = https://github.com/reactive-platform/reactive-sdk
-	branch = layout-rework
