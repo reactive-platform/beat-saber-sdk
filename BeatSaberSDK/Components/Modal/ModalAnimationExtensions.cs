@@ -10,39 +10,41 @@ namespace Reactive.BeatSaber.Components {
 
         public static T WithJumpAnimation<T>(this T modal, AnimationDuration? duration = null) where T : ModalBase {
             var group = modal.Content.GetOrAddComponent<CanvasGroup>();
-            var dur = duration.GetValueOrDefault(150.ms());
+
+            var modalScale = ValueUtils.AnimatedFloat(0f, duration.GetValueOrDefault(150.ms()));
+
+            modal.OpenAnimation = AnimationUtils.Animation(
+                () => modalScale.Value = 1f,
+                [modalScale]
+            );
+
+            modal.CloseAnimation = AnimationUtils.Animation(
+                () => modalScale.Value = 0f,
+                [modalScale]
+            );
             
-            modal.OpenAnimator = ValueUtils.Animate<ModalBase>(
-                modal,
+            modal.Animate(
+                modalScale,
                 (x, y) => {
-                    Animate(x, y);
                     group.alpha = y;
-                },
-                dur
+                    
+                    EvaluateJumpCurve(y, out var xScale, out var yScale);
+                    x.ContentTransform.localScale = new Vector3(xScale, yScale, 1f);
+                }
             );
-            modal.CloseAnimator = ValueUtils.Animate<ModalBase>(
-                modal,
-                (x, y) => {
-                    Animate(x, 1f - y);
-                    group.alpha = 1f - y;
-                },
-                dur
-            );
+            
             return modal;
+        }
 
-            static void Animate(ModalBase x, float t) {
-                // X scale curve
-                var xScale = t <= 0.3f ?
-                    Mathf.Lerp(0.85f, 1.065f, t / 0.3f) :      // Linear interpolation from 0.85 to 1.065
-                    Mathf.Lerp(1.065f, 1f, (t - 0.3f) / 0.7f); // Linear interpolation from 1.065 to 1
+        // Made based on the base-game curve
+        private static void EvaluateJumpCurve(float t, out float x, out float y) {
+            x = t <= 0.3f ?
+                Mathf.Lerp(0.85f, 1.065f, t / 0.3f) :
+                Mathf.Lerp(1.065f, 1f, (t - 0.3f) / 0.7f);
 
-                // Y scale curve
-                var yScale = t <= 0.47f ?
-                    Mathf.Lerp(0f, 0.95f, t / 0.47f) :          // Linear interpolation from 0 to 0.95
-                    Mathf.Lerp(0.95f, 1f, (t - 0.47f) / 0.53f); // Linear interpolation from 0.95 to 1
-
-                x.ContentTransform.localScale = new Vector3(xScale, yScale, 1f);
-            }
+            y = t <= 0.47f ?
+                Mathf.Lerp(0f, 0.95f, t / 0.47f) :
+                Mathf.Lerp(0.95f, 1f, (t - 0.47f) / 0.53f);
         }
 
         #endregion
@@ -63,7 +65,7 @@ namespace Reactive.BeatSaber.Components {
             private readonly float _targetAlpha;
 
             private CanvasGroup? _group;
-            private IObjectAnimator<ModalBase>? _animator;
+            private IAnimation? _animator;
             private bool _reverse;
 
             public void OnUpdate() {
@@ -86,7 +88,7 @@ namespace Reactive.BeatSaber.Components {
                         _group = _objectAccessor().GetOrAddComponent<CanvasGroup>();
                     }
                     _group.ignoreParentGroups = true;
-                    _animator = _modal.OpenAnimator;
+                    _animator = _modal.OpenAnimation;
                     _reverse = false;
                 } else {
                     _animator = null;
@@ -97,7 +99,7 @@ namespace Reactive.BeatSaber.Components {
             private void HandleModalClosed(IModal _, bool finished) {
                 if (!finished) {
                     _reverse = true;
-                    _animator = _modal.CloseAnimator;
+                    _animator = _modal.CloseAnimation;
                 } else {
                     _animator = null;
                     _group!.alpha = 1f;

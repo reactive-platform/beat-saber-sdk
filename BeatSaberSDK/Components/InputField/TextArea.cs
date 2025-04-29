@@ -217,7 +217,7 @@ namespace Reactive.BeatSaber.Components {
             }.AsFlexGroup(padding: 1f, gap: 1f).WithListener(
                 x => x.IsHovered,
                 x => labelColor.Value = !x ? placeholderColor : placeholderColor.ColorWithAlpha(0.5f)
-            ).WithEffect(
+            ).Animate(
                 labelColor,
                 (_, y) => _label.Color = Text.Length > 0 ? textColor : y
             ).Bind(ref _backgroundButton).Use();
