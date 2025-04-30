@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using JetBrains.Annotations;
 using Reactive.Components;
+using Reactive.Yoga;
 using UnityEngine;
 using VRUIControls;
 using Object = UnityEngine.Object;
@@ -42,6 +43,14 @@ namespace Reactive.BeatSaber.Components {
 
         protected override GameObject Construct() {
             return new Background {
+                LayoutModifier = new YogaModifier {
+                    Size = new() { x = 96.pt(), y = 32.pt() }
+                },
+                
+                LayoutController = new YogaLayoutController {
+                    Padding = 2.pt()
+                },
+
                 Children = {
                     new Layout()
                         .With(
@@ -52,7 +61,7 @@ namespace Reactive.BeatSaber.Components {
                             }
                         ).AsFlexItem(size: new() { x = 92f, y = 28f })
                 }
-            }.AsFlexGroup(padding: 2f).WithSizeDelta(96f, 32f).AsBlurBackground().Bind(ref _backgroundImage).Use();
+            }.AsBlurBackground().Bind(ref _backgroundImage).Use();
         }
 
         private static HMUI.UIKeyboard InstantiateKeyboard() {
@@ -64,8 +73,6 @@ namespace Reactive.BeatSaber.Components {
         }
 
         protected override void OnInitialize() {
-            this.WithSizeDelta(96f, 32f);
-            
             _uiKeyboard.okButtonWasPressedEvent += HandleOkButtonPressed;
             _uiKeyboard.deleteButtonWasPressedEvent += HandleDeletePressed;
             _uiKeyboard.keyWasPressedEvent += HandleKeyPressed;
