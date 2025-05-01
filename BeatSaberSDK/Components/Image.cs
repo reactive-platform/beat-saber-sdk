@@ -128,27 +128,12 @@ public class Image : ReactiveComponent, IComponentHolder<Image>, ISkewedComponen
     public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
 
     public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
-        var nativeSize = _image.sprite.rect.size;
-
-        // Scale to match Image's aspect ratio settings
-        var aspectRatio = nativeSize.x / nativeSize.y;
-        var measuredWidth = widthMode == MeasureMode.Undefined ? nativeSize.x : width;
-        var measuredHeight = heightMode == MeasureMode.Undefined ? nativeSize.y : height;
-
-        if (_image.preserveAspect) {
-            if (widthMode == MeasureMode.Exactly) {
-                measuredHeight = measuredWidth / aspectRatio;
-            } else if (heightMode == MeasureMode.Exactly) {
-                measuredWidth = measuredHeight * aspectRatio;
-            } else {
-                measuredWidth = Mathf.Min(measuredWidth, nativeSize.x);
-                measuredHeight = measuredWidth / aspectRatio;
-            }
-        }
+        var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
+        var measuredHeight = heightMode == MeasureMode.Undefined ? Mathf.Infinity : height;
 
         return new() {
-            x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(measuredWidth, width),
-            y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(measuredHeight, height)
+            x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(_image.preferredWidth, measuredWidth),
+            y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(_image.preferredHeight, measuredHeight)
         };
     }
 }
