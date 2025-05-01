@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HMUI;
 using JetBrains.Annotations;
 using Reactive.Components;
+using Reactive.Yoga;
 using UnityEngine;
 
 namespace Reactive.BeatSaber.Components {
@@ -136,7 +137,7 @@ namespace Reactive.BeatSaber.Components {
 
                     x.Children.AddRange(ConstructContent());
                 }
-            ).AsFlexGroup().Bind(ref _button).Use();
+            ).AsFlexGroup(justifyContent: Justify.SpaceAround).Bind(ref _button).Use();
         }
 
         protected abstract IEnumerable<IReactiveComponent> ConstructContent();
