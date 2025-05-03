@@ -22,30 +22,11 @@ namespace Reactive.BeatSaber {
             NotInteractableColor = Color.black.ColorWithAlpha(0.25f)
         };
 
-        public static ReadOnlyColorSet PrimaryButtonColorSet => new() {
-            NotInteractableColor = Color.black.ColorWithAlpha(0.3f),
-            ActiveColor = new(0, 0.75f, 0.75f),
-            HoveredColor = new(0, 0.75f, 1f),
-            Color = new(0, 0.5f, 1f)
-        };
-
         public static ReadOnlyColorSet ControlButtonColorSet => new() {
             ActiveColor = new(0f, 0.75f, 1f, 1f),
             HoveredColor = Color.white.ColorWithAlpha(0.2f),
             Color = Color.black.ColorWithAlpha(0.5f),
             NotInteractableColor = Color.black.ColorWithAlpha(0.35f)
-        };
-
-        public static ReadOnlyColorSet ButtonColorSet => new() {
-            ActiveColor = new(0.0f, 0.4f, 1.0f, 1.0f),
-            HoveredColor = new(0.0f, 0.4f, 1.0f, 1.0f),
-            Color = (Color.white * 0.8f).ColorWithAlpha(0.2f)
-        };
-        
-        public static ReadOnlyColorSet SecondaryButtonColorSet => new() {
-            ActiveColor = new(0.0f, 0.4f, 1.0f, 1.0f),
-            HoveredColor = (Color.white * 0.5f).ColorWithAlpha(0.2f),
-            Color = (Color.white * 0.8f).ColorWithAlpha(0.2f)
         };
 
         public static ReadOnlyColorSet TextColorSet => new() {
@@ -54,6 +35,8 @@ namespace Reactive.BeatSaber {
             HoveredColor = Color.white * 0.9f,
             Color = Color.white
         };
+
+        public static readonly Color PrimaryButtonColor = new(0, 0.5f, 1f);
 
         public static readonly Color TextColor = Color.white;
         public static readonly Color SelectedTextColor = new(0f, 0.75f, 1f, 1f);

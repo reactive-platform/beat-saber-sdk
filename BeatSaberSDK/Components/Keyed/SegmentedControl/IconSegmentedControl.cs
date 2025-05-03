@@ -27,7 +27,11 @@ namespace Reactive.BeatSaber.Components {
                     Material = BeatSaberResources.Materials.uiAdditiveGlowMaterial
                 },
                 Latching = true,
-                Colors = BeatSaberStyle.ButtonColorSet,
+                Colors = new SimpleColorSet {
+                    ActiveColor = BeatSaberStyle.PrimaryButtonColor,
+                    HoveredColor = BeatSaberStyle.PrimaryButtonColor,
+                    Color = (Color.white * 0.8f).ColorWithAlpha(0.2f)
+                },
                 OnStateChanged = _ => SelectSelf()
             }.Bind(ref _button).Use();
         }
