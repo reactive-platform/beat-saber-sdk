@@ -38,7 +38,7 @@ namespace Reactive.BeatSaber.Components {
                 OnGraphicStateChanged();
             }
         }
-        
+
         public GraphicState GraphicState => _button.WrappedButton.GraphicState;
 
         public bool IsPressed => _button.IsPressed;
@@ -106,7 +106,10 @@ namespace Reactive.BeatSaber.Components {
 
                     x.Children.AddRange(ConstructContent());
                 }
-            ).AsFlexGroup(justifyContent: Justify.SpaceAround).Bind(ref _button).Use();
+            ).AsFlexGroup(
+                justifyContent: Justify.SpaceAround,
+                padding: new() { left = 1f, right = 1f }
+            ).Bind(ref _button).Use();
         }
 
         protected abstract IEnumerable<IReactiveComponent> ConstructContent();

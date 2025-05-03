@@ -104,7 +104,7 @@ namespace Reactive.BeatSaber.Components {
                     OnClick?.Invoke();
                     GameResources.ButtonClickSignal.Raise();
                 },
-                
+
                 Children = {
                     // Background 
                     new Image {
@@ -137,7 +137,10 @@ namespace Reactive.BeatSaber.Components {
 
                     x.Children.AddRange(ConstructContent());
                 }
-            ).AsFlexGroup(justifyContent: Justify.SpaceAround).Bind(ref _button).Use();
+            ).AsFlexGroup(
+                justifyContent: Justify.SpaceAround,
+                padding: new() { left = 1f, right = 1f }
+            ).Bind(ref _button).Use();
         }
 
         protected abstract IEnumerable<IReactiveComponent> ConstructContent();
