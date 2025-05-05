@@ -31,6 +31,8 @@ namespace Reactive.BeatSaber.Components {
 
         public Action<Dialog<T>>? CancelButtonClickedCallback { get; set; }
 
+        protected override bool AllowExternalClose => true;
+        
         #endregion
 
         #region Construct
