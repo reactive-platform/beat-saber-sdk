@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 namespace Reactive.BeatSaber.Components {
     [PublicAPI]
-    public abstract class SliderComponentBase : ReactiveComponent {
+    public abstract class SliderBase : ReactiveComponent {
         #region Props
 
         public Range ValueRange {

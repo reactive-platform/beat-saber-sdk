@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Reactive.BeatSaber.Components {
     [PublicAPI]
-    public class Slider : SliderComponentBase {
+    public class Slider : SliderBase {
         #region UI Props
 
         public bool ShowValueText {
