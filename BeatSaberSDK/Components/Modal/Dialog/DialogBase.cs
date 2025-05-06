@@ -55,7 +55,7 @@ namespace Reactive.BeatSaber.Components {
             get => _layout.LayoutController;
             set => _layout.LayoutController = value;
         }
-        
+
         protected override bool AllowExternalClose => false;
 
         private DialogHeader _header = null!;
@@ -92,7 +92,11 @@ namespace Reactive.BeatSaber.Components {
                         }
                     }.AsFlexItem(basis: 8f).AsFlexGroup(padding: 1f, gap: 1f)
                 }
-            }.AsFlexGroup(direction: FlexDirection.Column).AsBlurBackground().Bind(ref _layout).Use();
+            }.AsFlexGroup(
+                direction: FlexDirection.Column,
+                constrainHorizontal: false,
+                constrainVertical: false
+            ).AsBlurBackground().Bind(ref _layout).Use();
         }
 
         protected abstract ILayoutItem ConstructContent();
