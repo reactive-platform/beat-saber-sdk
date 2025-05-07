@@ -3,6 +3,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
 using JetBrains.Annotations;
+using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Reactive.BeatSaber;
@@ -23,6 +25,50 @@ public static class BeatSaberUtils {
 
     #endregion
 
+    #region Canvas
+
+    /// <summary>
+    /// Adds a game-configured canvas with the specified params to the reactive component.
+    /// </summary>
+    /// <param name="content">A reactive component to add to.</param>
+    public static void AddCanvas(IReactiveComponent component) {
+        AddCanvas(component, 3000, out _, out _);
+    }
+
+    /// <summary>
+    /// Adds a game-configured canvas with the specified params to the reactive component.
+    /// </summary>
+    /// <param name="content">A reactive component to add to.</param>
+    /// <param name="sortingOrder">A sorting order.</param>
+    public static void AddCanvas(IReactiveComponent component, int sortingOrder, out Canvas canvas, out CanvasScaler scaler) {
+        AddCanvas(component.Content, sortingOrder, out canvas, out scaler);
+    }
+
+    /// <summary>
+    /// Adds a game-configured canvas with the specified params to the game object.
+    /// </summary>
+    /// <param name="content">A game object to add to.</param>
+    public static void AddCanvas(GameObject content) {
+        AddCanvas(content, 3000, out _, out _);
+    }
+
+    /// <summary>
+    /// Adds a game-configured canvas with the specified params to the game object.
+    /// </summary>
+    /// <param name="content">A game object to add to.</param>
+    /// <param name="sortingOrder">A sorting order.</param>
+    public static void AddCanvas(GameObject content, int sortingOrder, out Canvas canvas, out CanvasScaler scaler) {
+        canvas = content.AddComponent<Canvas>();
+        canvas.sortingOrder = sortingOrder;
+        canvas.additionalShaderChannels |= AdditionalCanvasShaderChannels.TexCoord2;
+        //
+        scaler = content.AddComponent<CanvasScaler>();
+        scaler.dynamicPixelsPerUnit = 3.44f;
+        scaler.referencePixelsPerUnit = 10f;
+    }
+
+    #endregion
+
     #region Zenject
 
 #if !COMPILE_EDITOR
@@ -38,7 +84,7 @@ public static class BeatSaberUtils {
     private static void MenuInstallerPostfix(MainSettingsMenuViewControllersInstaller __instance) {
         _menuContainer = __instance.Container;
     }
-    
+
     [HarmonyPatch(typeof(PCAppInit), "InstallBindings")]
     [HarmonyPostfix]
     private static void AppInstallerPostfix(PCAppInit __instance) {
