@@ -1,4 +1,5 @@
 using System;
+using HMUI;
 using JetBrains.Annotations;
 using Reactive.Components;
 using UnityEngine;
@@ -22,17 +23,17 @@ namespace Reactive.BeatSaber.Components {
                 () => modalScale.Value = 0f,
                 [modalScale]
             );
-            
+
             modal.Animate(
                 modalScale,
                 (x, y) => {
                     group.alpha = y;
-                    
+
                     EvaluateJumpCurve(y, out var xScale, out var yScale);
                     x.ContentTransform.localScale = new Vector3(xScale, yScale, 1f);
                 }
             );
-            
+
             return modal;
         }
 
@@ -69,12 +70,14 @@ namespace Reactive.BeatSaber.Components {
             private bool _reverse;
 
             public void OnUpdate() {
-                if (_animator == null) return;
-                _group!.alpha = Mathf.Lerp(
-                    _reverse ? _targetAlpha : 1f,
-                    _reverse ? 1f : _targetAlpha,
-                    _animator.Progress
-                );
+                if (_animator == null) {
+                    return;
+                }
+
+                var from = _reverse ? _targetAlpha : 1f;
+                var to = _reverse ? 1f : _targetAlpha;
+
+                _group!.alpha = Mathf.Lerp(from, to, _animator.Progress);
             }
 
             public void OnDestroy() {
@@ -108,13 +111,27 @@ namespace Reactive.BeatSaber.Components {
             }
         }
 
-        public static T WithAlphaAnimation<T>(
-            this T modal,
-            Func<GameObject> objectAccessor,
-            float targetAlpha = 0.2f
-        ) where T : ModalBase {
+        /// <summary>
+        /// Adds an alpha animation to the specified object.
+        /// </summary>
+        /// <param name="modal">A modal to animate with.</param>
+        /// <param name="objectAccessor">An object accessor. Leave null to attach to the nearest ViewController.</param>
+        /// <param name="targetAlpha">A target animation alpha.</param>
+        /// <exception cref="InvalidOperationException">Throws when accessor is null and the object is not in a ViewController hierarchy.</exception>
+        public static T WithAlphaAnimation<T>(this T modal, Func<GameObject>? objectAccessor = null, float targetAlpha = 0.2f) where T : ModalBase {
+            objectAccessor ??= () => {
+                var controller = modal.Content.GetComponentInParent<ViewController>();
+
+                if (controller == null) {
+                    throw new InvalidOperationException("The component either must be in a ViewController hierarchy to use WithAlphaAnimation or provide a custom object accessor");
+                }
+
+                return controller.gameObject;
+            };
+
             var module = new AlphaModalModule(modal, objectAccessor, targetAlpha);
             modal.BindModule(module);
+
             return modal;
         }
 

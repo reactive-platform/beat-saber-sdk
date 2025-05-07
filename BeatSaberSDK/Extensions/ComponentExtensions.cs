@@ -221,11 +221,7 @@ public static class ComponentExtensions {
         ModalSystem.PresentModal(comp, screen, animated);
     }
 
-    public static T WithModal<T, TModal>(
-        this T holder,
-        TModal modal,
-        bool animated = true
-    ) where T : IComponentHolder<ButtonBase> where TModal : IModal, IReactiveComponent {
+    public static T WithModal<T>(this T holder, IModal modal, bool animated = true) where T : IComponentHolder<ButtonBase> {
         var comp = holder.Component;
         comp.OnClick += () => modal.Present(comp.ContentTransform, animated);
         return holder;
