@@ -57,8 +57,6 @@ namespace Reactive.BeatSaber.Components {
                 _modal = modal;
                 _objectAccessor = objectAccessor;
                 _targetAlpha = targetAlpha;
-                _modal.ModalClosedEvent += HandleModalClosed;
-                _modal.ModalOpenedEvent += HandleModalOpened;
             }
 
             private readonly ModalBase _modal;
@@ -80,7 +78,12 @@ namespace Reactive.BeatSaber.Components {
                 _group!.alpha = Mathf.Lerp(from, to, _animator.Progress);
             }
 
-            public void OnDestroy() {
+            public void OnBind() {
+                _modal.ModalClosedEvent += HandleModalClosed;
+                _modal.ModalOpenedEvent += HandleModalOpened;
+            }
+
+            public void OnUnbind() {
                 _modal.ModalClosedEvent -= HandleModalClosed;
                 _modal.ModalOpenedEvent -= HandleModalOpened;
             }
