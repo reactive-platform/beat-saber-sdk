@@ -44,8 +44,7 @@ public static class ComponentExtensions {
                 FontSize = fontSize,
                 RichText = richText,
                 Overflow = overflow
-            }.With(
-                x => {
+            }.With(x => {
                     if (button is ISkewedComponent skewed) {
                         ((ISkewedComponent)x).Skew = skewed.Skew;
                     }
@@ -97,8 +96,7 @@ public static class ComponentExtensions {
                 PixelsPerUnit = pixelsPerUnit ?? 0f,
                 ImageType = pixelsPerUnit == null ? type : UImage.Type.Sliced,
                 PreserveAspect = preserveAspect
-            }.With(
-                x => {
+            }.With(x => {
                     if (button is not ISkewedComponent skewed) return;
                     x.Skew = skewed.Skew;
                 }
@@ -216,7 +214,7 @@ public static class ComponentExtensions {
 
     #region Modal
 
-    public static void Present<T>(this T comp, Transform child, bool animated = true) where T : IModal, IReactiveComponent {
+    public static void Present(this IModal comp, Transform child, bool animated = true) {
         var screen = child.GetComponentInParent<ViewController>().transform;
         ModalSystem.PresentModal(comp, screen, animated);
     }
