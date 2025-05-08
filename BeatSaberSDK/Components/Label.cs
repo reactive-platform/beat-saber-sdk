@@ -154,15 +154,9 @@ public class Label : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutI
     public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
 
     public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
-        var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
-        var measuredHeight = heightMode == MeasureMode.Undefined ? Mathf.Infinity : height;
-        
-        var textSize = _text.GetPreferredValues(measuredWidth, measuredHeight);
+        var size = _text.GetPreferredValues();
 
-        return new() {
-            x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(textSize.x, measuredWidth),
-            y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(textSize.y, measuredHeight)
-        };
+        return LayoutTool.MeasureNode(size, width, widthMode, height, heightMode);
     }
 
     private void RequestLeafRecalculation() {

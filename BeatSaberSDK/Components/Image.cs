@@ -128,12 +128,11 @@ public class Image : ReactiveComponent, IComponentHolder<Image>, ISkewedComponen
     public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
 
     public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
-        var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
-        var measuredHeight = heightMode == MeasureMode.Undefined ? Mathf.Infinity : height;
+        var size = new Vector2(
+            _image.preferredWidth,
+            _image.preferredHeight
+        );
 
-        return new() {
-            x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(_image.preferredWidth, measuredWidth),
-            y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(_image.preferredHeight, measuredHeight)
-        };
+        return LayoutTool.MeasureNode(size, width, widthMode, height, heightMode);
     }
 }
