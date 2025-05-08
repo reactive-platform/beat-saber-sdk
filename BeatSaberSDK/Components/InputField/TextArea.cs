@@ -4,6 +4,7 @@ using Reactive.Components;
 using Reactive.Yoga;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Reactive.BeatSaber.Components {
     [PublicAPI]
@@ -85,6 +86,7 @@ namespace Reactive.BeatSaber.Components {
             var showPlaceholder = _focused && Text.Length > 0;
             _label.Text = showPlaceholder ? Text : _placeholder;
             _label.Color = showPlaceholder ? textColor : placeholderColor;
+            RefreshCaretPos();
         }
 
         private void RefreshClearButton() {
@@ -96,10 +98,6 @@ namespace Reactive.BeatSaber.Components {
             RefreshCaret();
             RefreshClearButton();
             NotifyPropertyChanged(nameof(Focused));
-        }
-
-        protected override void OnInitialize() {
-            _label.ModifierUpdatedEvent += RefreshCaretPos;
         }
 
         #endregion
@@ -116,12 +114,12 @@ namespace Reactive.BeatSaber.Components {
             }
         }
 
-        private void RefreshCaretPos(ILayoutItem item) {
+        private void RefreshCaretPos() {
             var transform = _caret.ContentTransform;
             var pos = transform.anchoredPosition;
-            
+
             // item is Label here
-            var measuredSize = ((ILeafLayoutItem)item).Measure(0f, MeasureMode.Undefined, 0f, MeasureMode.Undefined);
+            var measuredSize = _label.Measure(0f, MeasureMode.Undefined, 0f, MeasureMode.Undefined);
 
             pos.x = Text.Length == 0 ? 0 : measuredSize.x;
             transform.anchoredPosition = pos;
@@ -158,39 +156,43 @@ namespace Reactive.BeatSaber.Components {
                         Skew = BeatSaberStyle.Skew,
                         Color = BeatSaberStyle.SecondaryTextColor
                     }.AsFlexItem(
-                        size: new() { x = 4f, y = "auto" },
+                        size: new() { x = 4f },
                         margin: new() { left = 1f }
                     ).Bind(ref _icon),
 
-                    //text
-                    new Label {
-                        Alignment = TextAlignmentOptions.MidlineLeft,
-                        Overflow = TextOverflowModes.Ellipsis,
-                        FontStyle = FontStyles.Italic,
-                        Color = BeatSaberStyle.InactiveTextColor,
-                        FontSizeMin = 3f,
-                        FontSizeMax = 4f,
-                        EnableAutoSizing = true
-                    }.With(
-                        x => {
-                            //caret
-                            new Image {
-                                Sprite = GameResources.CaretIcon,
-                                Skew = BeatSaberStyle.Skew,
-                                Enabled = false
-                            }.AsRectItem(
-                                sizeDelta: new() { x = 0.6f, y = 4f },
-                                anchorMin: new(0f, 0.5f),
-                                anchorMax: new(0f, 0.5f),
-                                pivot: new(0f, 0.5f)
-                            ).Bind(ref _caret).Use(x.Content);
-                        }
-                    ).AsFlexItem(flexGrow: 1f).Bind(ref _label),
+                    // Wrapping in an absolute container to make overflowed text go back
+                    new Layout {
+                        Children = {
+                            // Text
+                            new Label {
+                                Alignment = TextAlignmentOptions.CaplineRight,
+                                Overflow = TextOverflowModes.Overflow,
+                                FontStyle = FontStyles.Italic,
+                                Color = BeatSaberStyle.InactiveTextColor,
+                                FontSize = 4f,
+                            }.With(x => {
+                                    // Caret
+                                    new Image {
+                                        ContentTransform = {
+                                            anchorMin = new(0f, 0.5f),
+                                            anchorMax = new(0f, 0.5f),
+                                            sizeDelta = new() { x = 0.6f, y = 4f },
+                                            pivot = new(0f, 0.5f)
+                                        },
 
-                    //clear button
+                                        Sprite = GameResources.CaretIcon,
+                                        Skew = BeatSaberStyle.Skew,
+                                        Enabled = false
+                                    }.Bind(ref _caret).Use(x.Content);
+                                }
+                            ).AsFlexItem(margin: new() { right = 0.8f, left = 0.8f }).Bind(ref _label)
+                        }
+                    }.AsFlexGroup().AsFlexItem(flexGrow: 1f, flexShrink: 1f).WithNativeComponent(out RectMask2D _),
+
+                    // Clear button
                     new BackgroundButton {
                         Enabled = false,
-                        WithinLayoutIfDisabled = true,
+
                         Image = {
                             Sprite = BeatSaberResources.Sprites.background,
                             Material = GameResources.UINoGlowMaterial
@@ -200,19 +202,18 @@ namespace Reactive.BeatSaber.Components {
                             HoveredColor = Color.black.ColorWithAlpha(0.8f)
                         },
                         OnClick = HandleClearButtonClicked,
+
                         Children = {
                             new Image {
                                 Sprite = BeatSaberResources.Sprites.crossIcon
-                            }.AsFlexItem(flexGrow: 1f, size: "auto")
+                            }.AsFlexItem(flexGrow: 1f)
                         }
                     }.AsFlexItem(
                         size: new() { x = 4f },
                         aspectRatio: 1f,
                         alignSelf: Align.Center,
                         margin: new() { right = 1f }
-                    ).AsFlexGroup(
-                        padding: 0.7f
-                    ).Bind(ref _clearButton),
+                    ).AsFlexGroup(padding: 0.7f).Bind(ref _clearButton),
                 }
             }.AsFlexGroup(padding: 1f, gap: 1f).WithListener(
                 x => x.IsHovered,
