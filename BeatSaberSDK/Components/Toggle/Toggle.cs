@@ -72,6 +72,8 @@ namespace Reactive.BeatSaber.Components {
 
         protected override void OnInitialize() {
             _progressValue = RememberAnimated(0f, 10.fact());
+            _progressValue.EvaluateNextFrame();
+            
             this.AsFlexItem(size: new() { x = 18f, y = 6f });
             this.Animate(
                 _progressValue,
