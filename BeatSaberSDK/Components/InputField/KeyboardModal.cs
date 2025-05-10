@@ -60,7 +60,7 @@ namespace Reactive.BeatSaber.Components {
             if (finished) return;
             Keyboard.SetActive(true);
             Keyboard.Setup(_inputField);
-            Modal.WithAnchorImmediate(_inputField!.ContentTransform, Placement, Offset);
+            Modal.WithAnchor(_inputField!, Placement, Offset, immediate: true);
         }
 
         protected override void OnSpawn() {
