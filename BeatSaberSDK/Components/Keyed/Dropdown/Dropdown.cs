@@ -10,11 +10,9 @@ namespace Reactive.BeatSaber.Components {
     /// <typeparam name="TParam">A param to be passed with key to provide additional info</typeparam>
     /// <typeparam name="TCell">A cell component</typeparam>
     [PublicAPI]
-    public class Dropdown<TKey, TParam, TCell> : ReactiveComponent, ISkewedComponent, IKeyedControl<TKey, TParam>
+    public partial class Dropdown<TKey, TParam, TCell> : ReactiveComponent, ISkewedComponent, IKeyedControl<TKey, TParam>
         where TCell : IReactiveComponent, ILayoutItem, ISkewedComponent, IPreviewableCell, IKeyedControlCell<TKey, TParam>, new() {
-        #region OptionsModal
-
-        private struct DropdownOption {
+        private struct DropdownOption : IEquatable<DropdownOption> {
             public TKey key;
             public TParam param;
 
@@ -25,114 +23,11 @@ namespace Reactive.BeatSaber.Components {
             public override bool Equals(object? obj) {
                 return obj is DropdownOption opt && opt.key!.Equals(key);
             }
+
+            public bool Equals(DropdownOption other) {
+                return key?.Equals(other.key) ?? false;
+            }
         }
-
-        private class OptionsModal : ModalBase {
-            #region CellWrapper
-
-            public class DropdownCellWrapper : TableCell<DropdownOption> {
-                #region Setup
-
-                private TCell _cell = default!;
-
-                protected override void OnInit(DropdownOption item) {
-                    _cell.Init(item.key, item.param);
-                }
-
-                protected override void OnCellStateChange(bool selected) {
-                    _cell.OnCellStateChange(selected);
-                }
-
-                #endregion
-
-                #region Construct
-
-                protected override GameObject Construct() {
-                    return new TCell().Bind(ref _cell).Use(null);
-                }
-
-                protected override void OnInitialize() {
-                    this.WithSizeDelta(0f, 6f);
-                    _cell.CellAskedToBeSelectedEvent += HandleCellAskedToBeSelected;
-                }
-
-                #endregion
-
-                #region Callbacks
-
-                private void HandleCellAskedToBeSelected(TKey key) {
-                    SelectSelf(true);
-                }
-
-                #endregion
-            }
-
-            #endregion
-
-            #region Setup
-
-            private TCell _previewCell = default!;
-            private DropdownOption _selectedOption;
-
-            public void Setup(TCell cell) {
-                _previewCell = cell;
-            }
-
-            public void RefreshPreviewCell() {
-                if (Table.SelectedIndexes.Count == 0) return;
-                var index = Table.SelectedIndexes.First();
-                _selectedOption = Table.FilteredItems[index];
-                _previewCell.Init(_selectedOption.key, _selectedOption.param);
-            }
-
-            #endregion
-
-            #region Construct
-
-            private const int MaxDisplayedItems = 5;
-            private const float ItemSize = 6f;
-
-            public Table<DropdownOption, DropdownCellWrapper> Table => _table;
-
-            private Table<DropdownOption, DropdownCellWrapper> _table = null!;
-
-            protected override void OnOpen(bool finished) {
-                if (finished) return;
-                var height = Mathf.Clamp(Table.Items.Count, 1, MaxDisplayedItems) * ItemSize + 2;
-                this.AsFlexItem(size: new() { x = 40f, y = height });
-            }
-
-            protected override GameObject Construct() {
-                return new Layout {
-                    Children = {
-                        new Background {
-                            Children = {
-                                new Table<DropdownOption, DropdownCellWrapper>()
-                                    .WithListener(
-                                        x => x.SelectedIndexes,
-                                        _ => {
-                                            RefreshPreviewCell();
-                                            CloseInternal();
-                                        }
-                                    )
-                                    .AsFlexItem(flexGrow: 1f)
-                                    .Bind(ref _table)
-                            }
-                        }.AsBlurBackground().AsFlexGroup(
-                            padding: new() { top = 1f, bottom = 1f }
-                        ).AsFlexItem(flexGrow: 1f),
-                        //scrollbar
-                        new Scrollbar()
-                            .AsFlexItem(size: new() { x = 2f })
-                            .With(x => Table.Scrollbar = x)
-                    }
-                }.AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false).Use();
-            }
-
-            #endregion
-        }
-
-        #endregion
 
         #region Dropdown
 
@@ -142,6 +37,7 @@ namespace Reactive.BeatSaber.Components {
             get => _selectedKey.Value ?? throw new InvalidOperationException("Key cannot be acquired when Items is empty");
             private set {
                 _selectedKey = value;
+
                 SelectedKeyChangedEvent?.Invoke(value);
                 NotifyPropertyChanged();
             }
@@ -150,23 +46,31 @@ namespace Reactive.BeatSaber.Components {
         public event Action<TKey>? SelectedKeyChangedEvent;
 
         private readonly ObservableDictionary<TKey, TParam> _items = new();
+        private readonly HashSet<DropdownOption> _options = new();
         private Optional<TKey> _selectedKey;
 
         public void Select(TKey key) {
-            Table.ClearSelection();
-            Table.Select(new DropdownOption { key = key });
+            if (_modalOpened) {
+                Table.ClearSelection();
+                Table.Select(new DropdownOption { key = key });
+            }
+
             SelectedKey = key;
-            _modal.RefreshPreviewCell();
+
+            _previewCell.Init(_selectedKey!, _items[_selectedKey!]);
         }
 
         private void RefreshSelection() {
-            if (_selectedKey.HasValue || Items.Count <= 0) return;
+            if (_selectedKey.HasValue || Items.Count <= 0) {
+                return;
+            }
+
             Select(Items.Keys.First());
         }
 
         #endregion
 
-        #region Props
+        #region Impl
 
         public float Skew {
             get => _skew;
@@ -193,91 +97,153 @@ namespace Reactive.BeatSaber.Components {
 
         #region Construct
 
-        private Table<DropdownOption, OptionsModal.DropdownCellWrapper> Table => _modal.Table;
+        private Table<DropdownOption, DropdownCellWrapper> Table => _modal.Modal.Table;
 
-        private OptionsModal _modal = null!;
+        private bool _modalOpened;
+        private SharedDropdownOptionsModal _modal = null!;
+
         private ImageButton _button = null!;
         private TCell _previewCell = default!;
         private CanvasGroup _canvasGroup = null!;
 
         protected override GameObject Construct() {
-            return new BackgroundButton {
-                Image = {
-                    Sprite = BeatSaberResources.Sprites.background,
-                    PixelsPerUnit = 12f,
-                    Material = GameResources.UINoGlowMaterial
-                },
-                Colors = BeatSaberStyle.ControlColorSet,
+            new SharedDropdownOptionsModal()
+                .With(x => x.BuildImmediate())
+                .WithOpenListener(HandleModalOpened)
+                .WithCloseListener(HandleModalClosed)
+                .WithBeforeOpenListener(HandleBeforeModalOpened)
+                .Bind(ref _modal);
 
-                Children = {
-                    new TCell {
-                        UsedAsPreview = true
-                    }.AsFlexItem(flexGrow: 1f).Bind(ref _previewCell),
-                    //icon
-                    new Image {
-                        Sprite = GameResources.ArrowIcon,
-                        Color = Color.white.ColorWithAlpha(0.8f),
-                        PreserveAspect = true
-                    }.AsFlexItem(
-                        size: new() { x = 3f }
-                    ),
-                    //modal
-                    new OptionsModal()
-                        .WithJumpAnimation()
-                        .WithAnchor(this, RelativePlacement.Center, unbindOnceOpened: false)
-                        .With(x => x.Setup(_previewCell))
-                        .Bind(ref _modal)
+            return new BackgroundButton {
+                    Image = {
+                        Sprite = BeatSaberResources.Sprites.background,
+                        PixelsPerUnit = 12f,
+                        Material = GameResources.UINoGlowMaterial
+                    },
+                    Colors = BeatSaberStyle.ControlColorSet,
+
+                    OnClick = () => {
+                        if (Items.Count == 0) {
+                            return;
+                        }
+
+                        _modal.Present(ContentTransform);
+                    },
+
+                    Children = {
+                        new TCell {
+                                UsedAsPreview = true
+                            }
+                            .AsFlexItem(flexGrow: 1f)
+                            .Bind(ref _previewCell),
+
+                        // Icon
+                        new Image {
+                            Sprite = GameResources.ArrowIcon,
+                            Color = Color.white.ColorWithAlpha(0.8f),
+                            PreserveAspect = true
+                        }.AsFlexItem(size: new() { x = 3f })
+                    }
                 }
-            }.WithNativeComponent(out _canvasGroup).AsFlexGroup(
-                padding: new() { left = 2f, right = 2f }
-            ).WithModal(_modal).Bind(ref _button).Use();
+                .WithNativeComponent(out _canvasGroup)
+                .AsFlexGroup(padding: new() { left = 2f, right = 2f })
+                .Bind(ref _button)
+                .Use();
         }
 
         protected override void OnInitialize() {
             this.AsFlexItem(size: new() { x = 36f, y = 6f });
             Skew = BeatSaberStyle.Skew;
+
             _items.ItemAddedEvent += HandleItemAdded;
             _items.ItemRemovedEvent += HandleItemRemoved;
             _items.AllItemsRemovedEvent += HandleAllItemsRemoved;
-            Table.WithListener(
-                x => x.SelectedIndexes,
-                x => {
-                    if (x.Count == 0) return;
-                    var index = x.First();
-                    var item = Table.FilteredItems[index];
-                    SelectedKey = item.key;
-                }
-            );
         }
 
         #endregion
 
         #region Callbacks
 
+        private void HandleBeforeModalOpened(IModal modal) {
+            var key = new DropdownOption { key = _selectedKey.Value! };
+            Table.Items.Clear();
+            Table.Items.AddRange(_options);
+
+            Table.Refresh();
+            Table.Select(key);
+            
+            _modal.Modal.ApplyLayout(ContentTransform);
+        }
+
+        private void HandleModalOpened(IModal modal, bool finished) {
+            if (finished) {
+                return;
+            }
+
+            Table.WithListener(x => x.SelectedIndexes, HandleSelectedIndexesUpdated);
+            _modalOpened = true;
+        }
+
+        private void HandleModalClosed(IModal modal, bool finished) {
+            if (finished) {
+                return;
+            }
+
+            Table.WithoutListener(x => x.SelectedIndexes, HandleSelectedIndexesUpdated);
+            _modalOpened = false;
+        }
+
+        private void HandleSelectedIndexesUpdated(IReadOnlyCollection<int> indexes) {
+            if (indexes.Count == 0) {
+                return;
+            }
+
+            var index = indexes.First();
+            var item = Table.FilteredItems[index];
+
+            SelectedKey = item.key;
+
+            _previewCell.Init(item.key, item.param);
+        }
+
         private void HandleItemAdded(TKey key, TParam param) {
-            Table.Items.Add(
-                new() {
-                    key = key,
-                    param = param
-                }
-            );
-            Table.Refresh(false);
-            RefreshSelection();
+            var option = new DropdownOption { key = key, param = param };
+
+            _options.Add(option);
+
+            if (_modalOpened) {
+                Table.Items.Add(option);
+                Table.Refresh(false);
+            }
+
             NotifyPropertyChanged(nameof(Items));
+            RefreshSelection();
         }
 
         private void HandleItemRemoved(TKey key, TParam param) {
-            Table.Items.Remove(new() { key = key });
-            Table.Refresh();
-            RefreshSelection();
+            var option = new DropdownOption { key = key };
+
+            _options.Remove(option);
+
+            if (_modalOpened) {
+                Table.Items.Remove(option);
+                Table.Refresh();
+            }
+
             NotifyPropertyChanged(nameof(Items));
+            RefreshSelection();
         }
 
         private void HandleAllItemsRemoved() {
-            Table.Items.Clear();
-            Table.Refresh();
-            RefreshSelection();
+            _options.Clear();
+
+            if (_modalOpened) {
+                Table.Items.Clear();
+                Table.Refresh();
+            }
+
             NotifyPropertyChanged(nameof(Items));
+            RefreshSelection();
         }
 
         #endregion
