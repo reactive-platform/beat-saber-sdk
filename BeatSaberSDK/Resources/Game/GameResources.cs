@@ -36,8 +36,10 @@ public class GameResources : ScriptableObject {
         _instance.buttonClickSignal = Find<Signal>("UIButtonWasPressed");
         
         _instance.arrowIcon = Find<Sprite>("ArrowIcon");
+        _instance.editIcon = Find<Sprite>("EditIcon");
         _instance.caretIcon = Find<Sprite>("Caret");
         _instance.verticalIndicatorIcon = Find<Sprite>("VerticalRoundRect8");
+        _instance.circleIcon = Find<Sprite>("FullCircle64");
         
         _instance.uiNoGlowMaterial = Find<Material>("UINoGlow");
         _instance.uiFontMaterial = Find<Material>(
@@ -66,7 +68,9 @@ public class GameResources : ScriptableObject {
     public Material uiFogBackgroundMaterial;
 
     public Sprite arrowIcon;
+    public Sprite editIcon;
     public Sprite caretIcon;
+    public Sprite circleIcon;
     public Sprite verticalIndicatorIcon;
 
     internal Material animatedButtonMaterial;
@@ -94,7 +98,11 @@ public class GameResources : ScriptableObject {
 
     public static Sprite ArrowIcon => _instance.arrowIcon;
     
+    public static Sprite EditIcon => _instance.editIcon;
+    
     public static Sprite CaretIcon => _instance.caretIcon;
+    
+    public static Sprite CircleIcon => _instance.circleIcon;
 
     public static Sprite VerticalIndicatorIcon => _instance.verticalIndicatorIcon;
 
