@@ -1,12 +1,14 @@
 using JetBrains.Annotations;
+using Reactive.Components;
 using UnityEngine;
 
 namespace Reactive.BeatSaber.Components {
     [PublicAPI]
-    public class Spinner : ReactiveComponent {
+    public class Spinner : ReactiveComponent, IComponentHolder<Image> {
         #region Construct
 
         public Image Image => _image;
+        Image IComponentHolder<Image>.Component => _image;
 
         private Image _image = null!;
 

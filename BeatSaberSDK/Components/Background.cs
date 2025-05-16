@@ -85,4 +85,9 @@ public class Background : ComponentLayout<Image> {
     #endregion
 
     public Image WrappedImage => Component;
+
+    protected override void OnInitialize() {
+        RoutePropertyChanged(WrappedImage, null);
+        base.OnInitialize();
+    }
 }

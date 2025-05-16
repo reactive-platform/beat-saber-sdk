@@ -1,12 +1,14 @@
 using JetBrains.Annotations;
+using Reactive.Components;
 using Reactive.Yoga;
 using UnityEngine;
 
 namespace Reactive.BeatSaber.Components {
     [PublicAPI]
-    public class NamedRail : ReactiveComponent {
+    public class NamedRail : ReactiveComponent, IComponentHolder<Label> {
         public Label Label => _label;
-
+        Label IComponentHolder<Label>.Component => _label;
+        
         public ILayoutItem? Component {
             get => _component;
             set {

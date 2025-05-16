@@ -8,22 +8,24 @@ namespace Reactive.BeatSaber.Components {
     /// A color picker component.
     /// </summary>
     [PublicAPI]
-    public class ColorPicker : ReactiveComponent {
-        #region Color
+    public class ColorPicker : ReactiveComponent, IComponentHolder<IModal> {
+        #region UI Props
 
         public Color Color {
             get => _color;
             set {
                 _color = value;
                 _colorSampleImage.Color = value;
-                
+
                 if (_modalOpened) {
                     _circleModal.Modal.ColorCircle.SetColor(value, false);
                 }
-                
+
                 NotifyPropertyChanged();
             }
         }
+
+        public RelativePlacement CirclePlacement { get; set; } = RelativePlacement.Center;
 
         private Color _color;
         private bool _modalOpened;
@@ -32,7 +34,7 @@ namespace Reactive.BeatSaber.Components {
 
         #region Construct
 
-        public RelativePlacement CirclePlacement { get; set; } = RelativePlacement.Center;
+        IModal IComponentHolder<IModal>.Component => _circleModal;
 
         private SharedModal<ColorCircleModal> _circleModal = null!;
         private Image _colorSampleImage = null!;
@@ -49,7 +51,7 @@ namespace Reactive.BeatSaber.Components {
                     }.AsFlexItem(
                         size: new() { x = 4f, y = "auto" }
                     ),
-                    
+
                     // Color sample
                     new Image {
                         Sprite = GameResources.CircleIcon,
@@ -57,7 +59,7 @@ namespace Reactive.BeatSaber.Components {
                     }.AsFlexItem(
                         size: new() { x = 4f, y = "auto" }
                     ).Bind(ref _colorSampleImage),
-                    
+
                     // Color circle
                     new SharedModal<ColorCircleModal>()
                         .WithAnchor(
@@ -84,7 +86,7 @@ namespace Reactive.BeatSaber.Components {
             if (finished) {
                 return;
             }
-            
+
             _modalOpened = true;
             _circleModal.Modal.WithListener(
                 x => x.ColorCircle.SavedColor,
@@ -97,7 +99,7 @@ namespace Reactive.BeatSaber.Components {
             if (finished) {
                 return;
             }
-            
+
             _modalOpened = false;
             _circleModal.Modal.WithoutListener(
                 x => x.ColorCircle.SavedColor,
