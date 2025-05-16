@@ -43,6 +43,8 @@ namespace Reactive.BeatSaber.Components {
 
         private T Keyboard => Modal.Component;
 
+        private bool _firstInit = true;
+
         public override void Close(bool immediate) {
             if (_inputField is { CanProceed: false }) return;
             base.Close(immediate);
@@ -64,7 +66,10 @@ namespace Reactive.BeatSaber.Components {
         }
 
         protected override void OnSpawn() {
-            Modal.WithJumpAnimation();
+            if (_firstInit) {
+                this.WithJumpAnimation();
+                _firstInit = true;
+            }
             Keyboard.KeyboardClosedEvent += HandleKeyboardClosed;
         }
 

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using HMUI;
 using JetBrains.Annotations;
 using Reactive.Components;
@@ -9,8 +11,9 @@ namespace Reactive.BeatSaber.Components {
     public static class ModalAnimationExtensions {
         #region JumpAnimation
 
-        public static T WithJumpAnimation<T>(this T modal, AnimationDuration? duration = null) where T : ModalBase {
-            var group = modal.Content.GetOrAddComponent<CanvasGroup>();
+        public static T WithJumpAnimation<T>(this T wrapper, AnimationDuration? duration = null) where T : IComponentHolder<IModal> {
+            var modal = wrapper.Component;
+            var group = new Lazy<CanvasGroup>(() => modal.Content.GetOrAddComponent<CanvasGroup>());
 
             var modalScale = ValueUtils.AnimatedFloat(0f, duration.GetValueOrDefault(150.ms()));
 
@@ -24,17 +27,21 @@ namespace Reactive.BeatSaber.Components {
                 [modalScale]
             );
 
+            modalScale.OnStart = _ => {
+                group.Evaluate();
+            };
+            
             modal.Animate(
                 modalScale,
                 (x, y) => {
-                    group.alpha = y;
+                    group.Value.alpha = y;
 
                     EvaluateJumpCurve(y, out var xScale, out var yScale);
                     x.ContentTransform.localScale = new Vector3(xScale, yScale, 1f);
                 }
             );
 
-            return modal;
+            return wrapper;
         }
 
         // Made based on the base-game curve
@@ -53,13 +60,16 @@ namespace Reactive.BeatSaber.Components {
         #region AlphaAnimation
 
         private class AlphaModalModule : IReactiveModule {
-            public AlphaModalModule(ModalBase modal, Func<GameObject> objectAccessor, float targetAlpha) {
+            public AlphaModalModule(IModal modal, Func<GameObject> objectAccessor, float targetAlpha, string? id) {
                 _modal = modal;
                 _objectAccessor = objectAccessor;
                 _targetAlpha = targetAlpha;
+                this.id = id;
             }
 
-            private readonly ModalBase _modal;
+            public readonly string? id;
+
+            private readonly IModal _modal;
             private readonly Func<GameObject> _objectAccessor;
             private readonly float _targetAlpha;
 
@@ -117,11 +127,14 @@ namespace Reactive.BeatSaber.Components {
         /// <summary>
         /// Adds an alpha animation to the specified object.
         /// </summary>
-        /// <param name="modal">A modal to animate with.</param>
+        /// <param name="wrapper">A modal to animate with.</param>
         /// <param name="objectAccessor">An object accessor. Leave null to attach to the nearest ViewController.</param>
+        /// <param name="id">An id of the animation. Use this if you need multiple animations and plan to manipulate them later.</param>
         /// <param name="targetAlpha">A target animation alpha.</param>
         /// <exception cref="InvalidOperationException">Throws when accessor is null and the object is not in a ViewController hierarchy.</exception>
-        public static T WithAlphaAnimation<T>(this T modal, Func<GameObject>? objectAccessor = null, float targetAlpha = 0.2f) where T : ModalBase {
+        public static T WithAlphaAnimation<T>(this T wrapper, Func<GameObject>? objectAccessor = null, float targetAlpha = 0.2f, string? id = null) where T : IComponentHolder<IModal> {
+            var modal = wrapper.Component;
+
             objectAccessor ??= () => {
                 var controller = modal.Content.GetComponentInParent<ViewController>();
 
@@ -132,10 +145,49 @@ namespace Reactive.BeatSaber.Components {
                 return controller.gameObject;
             };
 
-            var module = new AlphaModalModule(modal, objectAccessor, targetAlpha);
+            if (id != null && FindAlphaModule(modal, id) != null) {
+                throw new InvalidOperationException("A module with the same id is already registered");
+            }
+
+            var module = new AlphaModalModule(modal, objectAccessor, targetAlpha, id);
             modal.BindModule(module);
 
-            return modal;
+            return wrapper;
+        }
+
+        /// <summary>
+        /// Removes an alpha animation from the specified component.
+        /// </summary>
+        /// <param name="wrapper">A modal to remove the animation from.</param>
+        /// <param name="id">An animation id (if present). Leave null to remove all animations of this kind.</param>
+        public static T WithoutAlphaAnimation<T>(this T wrapper, string? id = null) where T : IComponentHolder<IModal> {
+            var modal = wrapper.Component;
+
+            if (id != null) {
+                // Unbinding only a module with the specified id
+                var module = FindAlphaModule(modal, id);
+
+                if (module == null) {
+                    throw new KeyNotFoundException($"A module with id {id} was not found");
+                }
+
+                modal.UnbindModule(module);
+            } else {
+                // Unbinding all modules of type
+                var binder = modal as IReactiveModuleBinder;
+
+                foreach (var module in binder.Modules.OfType<AlphaModalModule>()) {
+                    binder.UnbindModule(module);
+                }
+            }
+
+            return wrapper;
+        }
+
+        private static AlphaModalModule? FindAlphaModule(IReactiveModuleBinder binder, string id) {
+            return binder.Modules
+                .OfType<AlphaModalModule>()
+                .FirstOrDefault(x => x.id == id);
         }
 
         #endregion

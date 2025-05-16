@@ -101,15 +101,16 @@ namespace Reactive.BeatSaber.Components {
         IModal IComponentHolder<IModal>.Component => _modal;
 
         private bool _modalOpened;
-        private SharedDropdownOptionsModal _modal = null!;
+        private SharedModal<DropdownOptionsModal> _modal = null!;
 
         private ImageButton _button = null!;
         private TCell _previewCell = default!;
         private CanvasGroup _canvasGroup = null!;
 
         protected override GameObject Construct() {
-            new SharedDropdownOptionsModal()
+            new SharedModal<DropdownOptionsModal>()
                 .With(x => x.BuildImmediate())
+                .WithJumpAnimation()
                 .WithOpenListener(HandleModalOpened)
                 .WithCloseListener(HandleModalClosed)
                 .WithBeforeOpenListener(HandleBeforeModalOpened)

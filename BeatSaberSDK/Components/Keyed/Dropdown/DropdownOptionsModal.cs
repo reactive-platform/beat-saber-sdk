@@ -41,7 +41,7 @@ public partial class Dropdown<TKey, TParam, TCell> {
 
         public void ApplyLayout(RectTransform buttonRect) {
             _buttonTransform = buttonRect;
-            
+
             var width = buttonRect.rect.width;
             var height = Mathf.Clamp(Table.Items.Count, 1, MaxDisplayedItems) * ItemSize + 2;
 
@@ -92,11 +92,5 @@ public partial class Dropdown<TKey, TParam, TCell> {
         }
 
         #endregion
-    }
-
-    private class SharedDropdownOptionsModal : SharedModal<DropdownOptionsModal> {
-        protected override void OnSpawn() {
-            Modal.WithJumpAnimation();
-        }
     }
 }

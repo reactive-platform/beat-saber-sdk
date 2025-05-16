@@ -40,6 +40,18 @@ namespace Reactive.BeatSaber.Components {
         private Image _colorSampleImage = null!;
 
         protected override GameObject Construct() {
+            // Color circle
+            new SharedModal<ColorCircleModal>()
+                .WithAnchor(
+                    this,
+                    Lazy(() => CirclePlacement, false),
+                    unbindOnceOpened: false
+                )
+                .WithJumpAnimation()
+                .WithOpenListener(HandleModalOpened)
+                .WithCloseListener(HandleModalClosed)
+                .Bind(ref _circleModal);
+
             return new AeroButtonLayout {
                 Children = {
                     // Icon
@@ -59,17 +71,6 @@ namespace Reactive.BeatSaber.Components {
                     }.AsFlexItem(
                         size: new() { x = 4f, y = "auto" }
                     ).Bind(ref _colorSampleImage),
-
-                    // Color circle
-                    new SharedModal<ColorCircleModal>()
-                        .WithAnchor(
-                            this,
-                            Lazy(() => CirclePlacement, false),
-                            unbindOnceOpened: false
-                        )
-                        .WithOpenListener(HandleModalOpened)
-                        .WithCloseListener(HandleModalClosed)
-                        .Bind(ref _circleModal)
                 }
             }.AsFlexGroup(
                 justifyContent: Justify.FlexStart,
