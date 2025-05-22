@@ -1,42 +1,51 @@
+using System;
 using JetBrains.Annotations;
 using Reactive.Components;
-using UnityEngine;
 
 namespace Reactive.BeatSaber.Components {
     [PublicAPI]
     public class TextListControl<TKey> : ListControl<TKey, string, TextKeyedControlCell<TKey>> { }
 
     [PublicAPI]
-    public class TextKeyedControlCell<TKey> : KeyedControlCell<TKey, string>, IPreviewableCell {
+    public class TextKeyedControlCell<TKey> : LabelButton, IKeyedControlCell<TKey, string>, IPreviewableCell {
+        public TKey Key => _key ?? throw new UninitializedComponentException();
+
         public bool UsedAsPreview {
-            set => _button.Interactable = !value;
+            set => Interactable = !value;
         }
 
-        public Label Label => _button.Label;
+        public event Action<TKey>? CellAskedToBeSelectedEvent;
 
-        private LabelButton _button = null!;
+        private TKey? _key;
+        private bool _notify;
 
-        public override void OnInit(TKey key, string param) {
-            Label.Text = param;
+        public void Init(TKey key, string param) {
+            Text = param;
+            _key = key;
         }
 
-        public override void OnCellStateChange(bool selected) {
-            _button.Click(selected);
+        public void OnCellStateChange(bool selected) {
+            _notify = false;
+            Click(selected);
         }
 
-        protected override GameObject Construct() {
+        protected override void OnInitialize() {
+            Latching = true;
+            FontSizeMin = 2f;
+            FontSizeMax = 5f;
+            EnableAutoSizing = true;
+            
             var colorSet = BeatSaberStyle.TextColorSet;
             colorSet.NotInteractableColor = colorSet.Color;
-            return new LabelButton {
-                Latching = true,
-                Colors = colorSet,
-                OnStateChanged = _ => SelectSelf(),
-                Label = {
-                    FontSizeMin = 2f,
-                    FontSizeMax = 5f,
-                    EnableAutoSizing = true
-                }
-            }.Bind(ref _button).Use();
+            Colors = colorSet;
+        }
+
+        protected override void OnButtonStateChange() {
+            base.OnButtonStateChange();
+            if (Active && _notify) {
+                CellAskedToBeSelectedEvent?.Invoke(Key);
+            }
+            _notify = true;
         }
     }
 }

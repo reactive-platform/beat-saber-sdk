@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 using Reactive.Components;
 using UnityEngine;
@@ -7,33 +8,42 @@ namespace Reactive.BeatSaber.Components {
     public class IconSegmentedControl<TKey> : SegmentedControl<TKey, Sprite, IconKeyedControlCell<TKey>> { }
 
     [PublicAPI]
-    public class IconKeyedControlCell<TKey> : KeyedControlCell<TKey, Sprite> {
-        public ImageButton Button => _button;
+    public class IconKeyedControlCell<TKey> : ImageButton, IKeyedControlCell<TKey, Sprite> {
+        public TKey Key => _key ?? throw new UninitializedComponentException();
+        
+        public event Action<TKey>? CellAskedToBeSelectedEvent;
 
-        private ImageButton _button = null!;
-
-        public override void OnInit(TKey key, Sprite param) {
-            Button.Image.Sprite = param;
+        private TKey? _key;
+        private bool _notify;
+        
+        public void Init(TKey key, Sprite param) {
+            Image.Sprite = param;
+            _key = key;
         }
 
-        public override void OnCellStateChange(bool selected) {
-            Button.Click(selected);
+        public void OnCellStateChange(bool selected) {
+            _notify = false;
+            Click(selected);
         }
 
-        protected override GameObject Construct() {
-            return new ImageButton {
-                Image = {
-                    PreserveAspect = true,
-                    Material = BeatSaberResources.Materials.uiAdditiveGlowMaterial
-                },
-                Latching = true,
-                Colors = new SimpleColorSet {
-                    ActiveColor = BeatSaberStyle.PrimaryButtonColor,
-                    HoveredColor = BeatSaberStyle.PrimaryButtonColor,
-                    Color = (Color.white * 0.8f).ColorWithAlpha(0.2f)
-                },
-                OnStateChanged = _ => SelectSelf()
-            }.Bind(ref _button).Use();
+        protected override void OnInitialize() {
+            Latching = true;
+            Colors = new SimpleColorSet {
+                ActiveColor = BeatSaberStyle.PrimaryButtonColor,
+                HoveredColor = BeatSaberStyle.PrimaryButtonColor,
+                Color = (Color.white * 0.8f).ColorWithAlpha(0.2f)
+            };
+
+            Image.PreserveAspect = true;
+            Image.Material = BeatSaberResources.Materials.uiAdditiveGlowMaterial;
+        }
+
+        protected override void OnButtonStateChange() {
+            base.OnButtonStateChange();
+            if (Active && _notify) {
+                CellAskedToBeSelectedEvent?.Invoke(Key);
+            }
+            _notify = true;
         }
     }
 }
