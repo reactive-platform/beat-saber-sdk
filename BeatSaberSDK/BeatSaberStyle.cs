@@ -10,26 +10,26 @@ namespace Reactive.BeatSaber {
     public static class BeatSaberStyle {
         public static readonly float Skew = 0.18f;
 
-        public static ReadOnlyColorSet InputColorSet => new() {
+        public static SimpleColorSet InputColorSet => new() {
             HoveredColor = Color.magenta.ColorWithAlpha(0.5f),
             Color = Color.black.ColorWithAlpha(0.5f),
             NotInteractableColor = Color.black.ColorWithAlpha(0.2f)
         };
 
-        public static ReadOnlyColorSet ControlColorSet => new() {
+        public static SimpleColorSet ControlColorSet => new() {
             HoveredColor = Color.white.ColorWithAlpha(0.2f),
             Color = Color.black.ColorWithAlpha(0.5f),
             NotInteractableColor = Color.black.ColorWithAlpha(0.25f)
         };
 
-        public static ReadOnlyColorSet ControlButtonColorSet => new() {
+        public static SimpleColorSet ControlButtonColorSet => new() {
             ActiveColor = new(0f, 0.75f, 1f, 1f),
             HoveredColor = Color.white.ColorWithAlpha(0.2f),
             Color = Color.black.ColorWithAlpha(0.5f),
             NotInteractableColor = Color.black.ColorWithAlpha(0.35f)
         };
 
-        public static ReadOnlyColorSet TextColorSet => new() {
+        public static SimpleColorSet TextColorSet => new() {
             ActiveColor = new(0f, 0.75f, 1f, 1f),
             NotInteractableColor = Color.white.ColorWithAlpha(0.2f),
             HoveredColor = Color.white * 0.9f,
