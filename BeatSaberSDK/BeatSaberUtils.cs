@@ -5,6 +5,7 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
+using VRUIControls;
 using Zenject;
 
 namespace Reactive.BeatSaber;
@@ -27,6 +28,34 @@ public static class BeatSaberUtils {
 
     #region Canvas
 
+    /// <summary>
+    /// Sets the component up as a canvas floating around.
+    /// </summary>
+    /// <param name="component">A component to set up.</param>
+    public static void Make3DScreen(IReactiveComponent component) {
+        Make3DScreen(component.Content);
+    }
+
+    /// <summary>
+    /// Sets the object up as a canvas floating around.  
+    /// </summary>
+    /// <param name="content">A game object to set up.</param>
+    public static void Make3DScreen(GameObject content) {
+        AddCanvas(content);
+        Make3DRaycastable(content);
+        
+        content.transform.localScale = Vector3.one * 0.02f;
+    }
+
+    /// <summary>
+    /// Makes the object with a canvas raycastable for a 3D pointer.
+    /// </summary>
+    /// <param name="content">A game object to set up.</param>
+    public static void Make3DRaycastable(GameObject content) {
+        var raycaster = content.AddComponent<VRGraphicRaycaster>();
+        MenuContainer.Inject(raycaster);
+    }
+    
     /// <summary>
     /// Adds a game-configured canvas with the specified params to the reactive component.
     /// </summary>
