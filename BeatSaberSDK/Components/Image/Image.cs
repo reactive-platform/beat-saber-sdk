@@ -118,7 +118,7 @@ public class Image : ReactiveComponent, IComponentHolder<Image>, ISkewedComponen
 
     Image IComponentHolder<Image>.Component => this;
 
-    private FixedImageView _image = null!;
+    internal FixedImageView _image = null!;
 
     protected override void Construct(RectTransform rect) {
         _image = rect.gameObject.AddComponent<FixedImageView>();
@@ -127,7 +127,7 @@ public class Image : ReactiveComponent, IComponentHolder<Image>, ISkewedComponen
 
     public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
 
-    public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
+    public virtual Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
         var size = new Vector2(
             _image.preferredWidth,
             _image.preferredHeight
