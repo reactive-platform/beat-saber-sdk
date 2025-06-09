@@ -23,7 +23,7 @@ public class WebImage : Image {
             this.WithWebSource(_src, () => {
                 Spinner.Enabled = true;
             },
-            (bool loaded) => {
+            (_) => {
                 Spinner.Enabled = false;
             });
         } else {
@@ -32,13 +32,21 @@ public class WebImage : Image {
         }
     }
 
-    public Spinner Spinner = null!;
+    private Spinner _spinner = null!;
+    public Spinner Spinner { 
+        get => _spinner;
+        private set => _spinner = value;   
+    }
 
     protected override void Construct(RectTransform rect) {
         base.Construct(rect);
 
-        Sprite = BeatSaberResources.Sprites.transparentPixel;
+        new Spinner().Bind(ref _spinner).WithRectExpand().Use(rect);
+    }
 
-        new Spinner().Bind(ref Spinner).WithRectExpand().Use(rect);
+    protected override void OnInitialize() {
+        base.OnInitialize();
+
+        Sprite = BeatSaberResources.Sprites.transparentPixel;
     }
 }
