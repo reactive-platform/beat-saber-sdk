@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
+using HMUI;
+using IPA.Utilities;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
@@ -43,7 +45,7 @@ public static class BeatSaberUtils {
     public static void Make3DScreen(GameObject content) {
         AddCanvas(content);
         Make3DRaycastable(content);
-        
+
         content.transform.localScale = Vector3.one * 0.02f;
     }
 
@@ -55,7 +57,7 @@ public static class BeatSaberUtils {
         var raycaster = content.AddComponent<VRGraphicRaycaster>();
         MenuContainer.Inject(raycaster);
     }
-    
+
     /// <summary>
     /// Adds a game-configured canvas with the specified params to the reactive component.
     /// </summary>
@@ -94,6 +96,44 @@ public static class BeatSaberUtils {
         scaler = content.AddComponent<CanvasScaler>();
         scaler.dynamicPixelsPerUnit = 3.44f;
         scaler.referencePixelsPerUnit = 10f;
+    }
+
+    #endregion
+
+    #region FlowCoordinator
+
+    /// <summary>
+    /// Replaces view controllers for the flow coordinator.
+    /// </summary>
+    /// <param name="flowCoordinator">A flow coordinator to operate on.</param>
+    public static void ReplaceInitialViewControllers(
+        this FlowCoordinator flowCoordinator,
+        Optional<ViewController> mainViewController = default,
+        Optional<ViewController> leftScreenViewController = default,
+        Optional<ViewController> rightScreenViewController = default,
+        Optional<ViewController> bottomScreenViewController = default,
+        Optional<ViewController> topScreenViewController = default
+    ) {
+        Replace(ref flowCoordinator._providedMainViewController, mainViewController);
+        Replace(ref flowCoordinator._providedLeftScreenViewController, leftScreenViewController);
+        Replace(ref flowCoordinator._providedRightScreenViewController, rightScreenViewController);
+        Replace(ref flowCoordinator._providedBottomScreenViewController, bottomScreenViewController);
+        Replace(ref flowCoordinator._providedTopScreenViewController, topScreenViewController);
+        return;
+
+        static void Replace(ref ViewController field, Optional<ViewController> view) {
+            if (view.HasValue) {
+                field = view.Value!;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Dismisses the flow coordinator from its parent.
+    /// </summary>
+    /// <param name="flowCoordinator">A flow coordinator to dismiss.</param>
+    public static void DismissSelf(this FlowCoordinator flowCoordinator) {
+        flowCoordinator._parentFlowCoordinator.DismissFlowCoordinator(flowCoordinator);
     }
 
     #endregion
