@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using HMUI;
 using JetBrains.Annotations;
 using Reactive.Components;
@@ -134,10 +135,11 @@ public class Label : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutI
     }
 
     private TextMeshProUGUI _text = null!;
+    private Vector2 _lastPreferredSize;
 
     protected override void Construct(RectTransform rect) {
         _text = rect.gameObject.AddComponent<CurvedTextMeshPro>();
-        _text.RegisterDirtyLayoutCallback(RequestLeafRecalculation);
+        _text.RegisterDirtyLayoutCallback(RequestLeafRecalculationOnDirty);
         _text.fontSharedMaterial = GameResources.UIFontMaterial;
     }
 
@@ -154,12 +156,31 @@ public class Label : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutI
     public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
 
     public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode) {
+        _lastPreferredSize = _text.GetPreferredValues();
+
+        return LayoutTool.MeasureNode(_lastPreferredSize, width, widthMode, height, heightMode);
+    }
+
+    private void RequestLeafRecalculationOnDirty() {
         var size = _text.GetPreferredValues();
 
-        return LayoutTool.MeasureNode(size, width, widthMode, height, heightMode);
+        if (size == _lastPreferredSize) {
+            // We didn't find a better way to track when the text got actually recalculated,
+            // so we use this workaround as a temporary fix
+            StartCoroutine(RequestLeafRecalculationNextFrame());
+        } else {
+            RequestLeafRecalculation();
+        }
+    }
+
+    private IEnumerator RequestLeafRecalculationNextFrame() {
+        yield return new WaitForEndOfFrame();
+        RequestLeafRecalculation();
     }
 
     private void RequestLeafRecalculation() {
+        _lastPreferredSize = _text.GetPreferredValues();
+        
         LeafLayoutUpdatedEvent?.Invoke(this);
         ScheduleLayoutRecalculation();
     }
