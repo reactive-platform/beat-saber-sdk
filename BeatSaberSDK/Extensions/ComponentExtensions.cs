@@ -4,6 +4,7 @@ using Reactive.Components;
 using Reactive.Yoga;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UImage = UnityEngine.UI.Image;
 
 namespace Reactive.BeatSaber.Components;
@@ -202,8 +203,7 @@ public static class ComponentExtensions {
                 Text = text
             },
             Component = comp
-        }.With(
-            x => {
+        }.With(x => {
                 if (comp is not ISkewedComponent skewed) return;
                 ((ISkewedComponent)x.Label).Skew = skewed.Skew;
             }
@@ -226,4 +226,19 @@ public static class ComponentExtensions {
     }
 
     #endregion
+
+    /// <summary>
+    /// Masks all children outside the rect bounds.
+    /// </summary>
+    /// <param name="comp">A component to use as a mask.</param>
+    /// <param name="filterRaycasts">Whether to filter raycasts from masked areas or not.</param>
+    public static T AsRectMask<T>(this T comp, bool filterRaycasts = true) where T : IReactiveComponent {
+        comp.WithNativeComponent(out RectMask2D _);
+
+        if (filterRaycasts) {
+            comp.WithNativeComponent(out RaycastMask2D _);
+        }
+
+        return comp;
+    }
 }

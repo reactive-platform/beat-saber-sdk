@@ -42,7 +42,7 @@
         <Reference Include="Menu.CommonLib">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Menu.CommonLib.dll</HintPath>
         </Reference>
-        <Reference Include="VRUI">
+        <Reference Include="VRUI" Publicize="True">
             <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\VRUI.dll</HintPath>
         </Reference>
         <Reference Include="Main">
