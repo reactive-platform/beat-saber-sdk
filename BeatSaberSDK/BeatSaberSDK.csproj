@@ -3,7 +3,7 @@
         <TargetFramework>net48</TargetFramework>
         <OutputType>Library</OutputType>
         <LocalRefsDir Condition="Exists('..\Refs')">..\Refs</LocalRefsDir>
-        <BeatSaberDir>$(LocalRefsDir)</BeatSaberDir>
+        <BeatSaberDir Condition="'$(BeatSaberDir)' == ''">$(LocalRefsDir)</BeatSaberDir>
         <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
@@ -19,6 +19,9 @@
     </PropertyGroup>
 
     <Import Project="$(MSBuildProjectFile).user" Condition="Exists('$(MSBuildProjectFile).user')"/>
+    <ItemGroup>
+        <None Include="$(MSBuildProjectFile).user" Condition="Exists('$(MSBuildProjectFile).user')"/>
+    </ItemGroup>
     <PropertyGroup>
         <UnityAssembliesDir Condition="'$(UnityAssembliesDir)' == ''">$(BeatSaberDir)\Beat Saber_Data\Managed</UnityAssembliesDir>
     </PropertyGroup>
@@ -81,26 +84,6 @@
         <EmbeddedResource Include="Resources\AssetBundles\asset_bundle"/>
         <EmbeddedResource Include="manifest.json"/>
     </ItemGroup>
-
-    <!-- Post-processing -->
-    <PropertyGroup>
-        <ArtifactsDest>$(BeatSaberDir)\Plugins</ArtifactsDest>
-        <LibArtifactsDest>$(BeatSaberDir)\Libs</LibArtifactsDest>
-        <ArtifactFile>bin\$(Configuration)\net48\Reactive</ArtifactFile>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <Artifacts Include="$(ArtifactFile).BeatSaber.Components.dll;$(ArtifactFile).BeatSaber.Components.pdb"/>
-        <LibArtifacts Include="$(ArtifactFile).Components.dll;$(ArtifactFile).Components.pdb;$(ArtifactFile).dll;$(ArtifactFile).pdb"/>
-    </ItemGroup>
-
-    <Target Condition="$(CopyArtifacts) == True" Name="CopyArtifacts" AfterTargets="Build">
-        <Message Importance="high" Text="Copying artifacts:
-    BeatSaberSDK to $(ArtifactsDest)
-    Libs to $(LibArtifactsDest)"/>
-        <Copy SourceFiles="@(Artifacts)" DestinationFolder="$(ArtifactsDest)"/>
-        <Copy SourceFiles="@(LibArtifacts)" DestinationFolder="$(LibArtifactsDest)"/>
-    </Target>
 
     <ItemGroup>
         <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2">

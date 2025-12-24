@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+        <!-- This file contains project properties used by the build. -->
+<Project>
+    <PropertyGroup>
+        <BSMTProjectType>BSIPA</BSMTProjectType>
+        <GenerateManifest>false</GenerateManifest>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <OutputCopy Include="$(OutputPath)\Reactive.dll" OutputPath="Libs\Reactive.dll" />
+        <OutputCopy Include="$(OutputPath)\Reactive.pdb" OutputPath="Libs\Reactive.pdb" />
+        <OutputCopy Include="$(OutputPath)\Reactive.Components.dll" OutputPath="Libs\Reactive.Components.dll" />
+        <OutputCopy Include="$(OutputPath)\Reactive.Components.pdb" OutputPath="Libs\Reactive.Components.pdb" />
+        <OutputCopy Include="$(OutputPath)\$(TargetFileName)" OutputPath="Plugins\$(TargetFileName)" />
+        <OutputCopy Include="$(OutputPath)\$(TargetName).pdb" OutputPath="Plugins\$(TargetName).pdb" />
+    </ItemGroup>
+</Project>
