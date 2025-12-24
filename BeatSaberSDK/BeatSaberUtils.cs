@@ -154,9 +154,9 @@ public static class BeatSaberUtils {
         _menuContainer = __instance.Container;
     }
 
-    [HarmonyPatch(typeof(PCAppInit), "InstallBindings")]
+    [HarmonyPatch(typeof(BeatSaberInit), "InstallBindings")]
     [HarmonyPostfix]
-    private static void AppInstallerPostfix(PCAppInit __instance) {
+    private static void AppInstallerPostfix(BeatSaberInit __instance) {
         _appContainer = __instance.Container;
     }
 
