@@ -3,9 +3,9 @@
   "id": "Reactive.BeatSaberSDK",
   "name": "Reactive.BeatSaberSDK",
   "author": "Hermanest",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "Beat Saber SDK for the ReactiveUI library.",
-  "gameVersion": "1.37.5",
+  "gameVersion": "1.42.0",
   "dependsOn": {
     "BSIPA": "^4.2.2"
   }
